@@ -15,6 +15,7 @@ derive_more = "0.99.5"
 glib = { git = "https://github.com/gtk-rs/gtk-rs" }
 iced = "0.2.0"
 nfd2 = "0.2.3"
+chrono = "0.4.19"
 
 
 [features]

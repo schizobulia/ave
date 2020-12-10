@@ -66,10 +66,10 @@ fn configure_encodebin(encodebin: &gst::Element) -> Result<(), Error> {
 
     Ok(())
 }
-//input_file = "C:\\Users\\gkk\\Videos\\test.mp4";
-//output_file = "C:\\Users\\gkk\\Videos\\test.fly";
+//input_file = "/home/test.mp4";
+//output_file = "/home/test.flv";
 pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error> {
-    gst::init()?;
+    gst::init().unwrap();
 
     let pipeline = gst::Pipeline::new(None);
 
@@ -291,15 +291,12 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
                             .into());
                     }
             }
-            MessageView::StateChanged(s) => {
-                println!(
-                    "State changed from {:?}: {:?} -> {:?} ({:?})",
-                    s.get_src().map(|s| s.get_path_string()),
-                    s.get_old(),
-                    s.get_current(),
-                    s.get_pending()
-                );
-            }
+            // MessageView::StateChanged(s) => {
+            //     println!(
+            //         "{:?}",
+            //         s.get_seqnum()
+            //     );
+            // }
             _ => (),
         }
     }

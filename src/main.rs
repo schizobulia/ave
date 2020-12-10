@@ -3,10 +3,13 @@ mod style;
 mod app;
 mod page;
 mod gstr;
+mod tool;
 
 use iced::{Sandbox, Element, Settings, window, Container, button, Text, Length};
 use app::app_message::Message;
 use nfd2::Response;
+use std::thread;
+use tool::datetime;
 
 fn application() {
     MainView::run(Settings {
@@ -56,7 +59,14 @@ impl Sandbox for MainView {
             Message::FileSelected => {
                 match nfd2::open_file_dialog(None, None).expect("oh no") {
                     Response::Okay(file_path) => {
-                        gstr::conversion::conversion_video(&*file_path.to_string_lossy(), "");
+                        let _handle = thread::spawn(move || {
+                            let result = gstr::conversion::conversion_video(&*file_path.to_string_lossy(), datetime::create_output_filename("flv").as_str());
+                            if result.is_ok() {
+                                println!("转换成功");
+                            } else {
+                                println!("转换失败");
+                            }
+                        });
                     }
                     Response::OkayMultiple(files) => println!("Files {:?}", files),
                     Response::Cancel => println!("User canceled"),
