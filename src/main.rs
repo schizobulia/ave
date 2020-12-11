@@ -12,7 +12,7 @@ use std::thread;
 use tool::datetime;
 
 fn application() {
-    MainView::run(Settings {
+    let _result = MainView::run(Settings {
         window: window::Settings {
             size: (800, 500),
             min_size: None,

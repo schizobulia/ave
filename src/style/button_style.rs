@@ -1,6 +1,8 @@
 use iced::{button, Background, Color, Vector};
 
 //reference：https://v4.bootcss.com/docs/components/buttons/
+
+#[allow(dead_code)]
 pub enum Button {
     Primary,
     Secondary,
