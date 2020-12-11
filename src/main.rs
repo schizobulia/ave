@@ -4,12 +4,14 @@ mod app;
 mod page;
 mod gstr;
 mod tool;
+mod model;
 
-use iced::{Sandbox, Element, Settings, window, Container, button, Text, Length};
+use iced::{Sandbox, Element, Settings, window, Container, button, Text, Length, pick_list};
 use app::app_message::Message;
 use nfd2::Response;
 use std::thread;
 use tool::datetime;
+use model::vide_type::VideoContainerType;
 
 fn application() {
     let _result = MainView::run(Settings {
@@ -34,6 +36,7 @@ struct MainView {
     page: String,
     audio_page_btn: button::State,
     file_home_btn: button::State,
+    pick_list: pick_list::State<VideoContainerType>,
 }
 
 impl Sandbox for MainView {
@@ -44,6 +47,7 @@ impl Sandbox for MainView {
             page: String::from("home"),
             audio_page_btn: button::State::default(),
             file_home_btn: button::State::default(),
+            pick_list: pick_list::State::default(),
         }
     }
 
@@ -72,13 +76,15 @@ impl Sandbox for MainView {
                     Response::Cancel => println!("User canceled"),
                 }
             }
+            Message::LanguageSelected(_) => {}
         }
     }
 
     fn view(&mut self) -> Element<Message> {
         match self.page.as_str() {
             "home" => {
-                Container::new(page::home::render(&mut self.audio_page_btn, &mut self.file_home_btn))
+                Container::new(page::home::render(
+                    &mut self.audio_page_btn, &mut self.file_home_btn, &mut self.pick_list))
                     .height(Length::Fill)
                     .width(Length::Fill)
                     .into()
