@@ -17,7 +17,6 @@ iced = "0.2.0"
 nfd2 = "0.2.3"
 chrono = "0.4.19"
 
-
 [features]
 default = []
 v1_10 = ["gst/v1_10"]
