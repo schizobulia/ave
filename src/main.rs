@@ -9,6 +9,7 @@ mod model;
 use iced::{Sandbox, Element, Settings, window, Container, Text, Length };
 use app::app_message::Message;
 use crate::app::state::home::HomeState;
+use crate::tool::file_tool::now_dir_path;
 
 fn application() {
     let _result = MainView::run(Settings {
@@ -55,6 +56,7 @@ impl Sandbox for MainView {
             }
             Message::FileSelected => {
                 page::home::formatting_video(self.home_page_state.select_video_type.clone().to_string());
+                self.home_page_state.create_video_path = format!("生成视频目录：{}", &*now_dir_path());
             }
             Message::LanguageSelected(vide_type) => {
                 self.home_page_state.select_video_type = vide_type;

@@ -1,4 +1,4 @@
-use iced::{Text, Button, Row, Column, PickList};
+use iced::{Text, Button, Row, Column, PickList, Align};
 use crate::app::app_message::Message;
 use crate::style::button_style;
 use crate::model::vide_type::VideoContainerType;
@@ -7,9 +7,9 @@ use nfd2::Response;
 use std::thread;
 use crate::tool::datetime;
 use crate::tool::file_tool;
-use crate::app::global::OUTPUT_DIR;
 use crate::gstr;
 use crate::app::state::home::HomeState;
+use crate::tool::file_tool::now_dir_path;
 
 //首页
 pub fn render(home_state: &mut HomeState) -> Column<Message> {
@@ -28,10 +28,11 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
     ).push(
         Column::new().padding(10).spacing(10)
             .push(
-                Text::new("请先选择需要最终转换的格式,然后选择文件,软件会自动开始转换(成功之后将自动打开文件夹)")
+                Text::new("请先选择需要最终转换的格式,然后选择文件,\
+                软件会自动开始转换(成功之后将自动打开文件夹)").size(18)
             )
             .push(
-                Row::new().spacing(10)
+                Row::new().spacing(10).align_items(Align::Center)
                     .push(
                         pick_list
                     )
@@ -39,7 +40,9 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
                         Button::new(&mut home_state.file_home_btn, Text::new("选择文件")).padding(5)
                             .style(button_style::Button::Primary)
                             .on_press(Message::FileSelected)
-                    )
+                    ).push(
+                    Text::new(&home_state.create_video_path).size(18)
+                )
             )
     )
 }
@@ -50,13 +53,14 @@ pub fn formatting_video(select_video_type: String) {
         Response::Okay(file_path) => {
             let _handle = thread::spawn(move || {
                 let result = gstr::conversion::conversion_video(
-                    &*file_path.to_string_lossy(), datetime::create_output_filename(&*select_video_type).as_str());
+                    &*file_path.to_string_lossy(),
+                    datetime::create_output_filename(&*select_video_type).as_str());
                 if result.is_ok() {
-                    file_tool::open_directory(OUTPUT_DIR);
+                    file_tool::open_directory(now_dir_path().as_str());
                 }
             });
         }
-        Response::OkayMultiple(_files) => {},
+        Response::OkayMultiple(_files) => {}
         Response::Cancel => println!("User canceled"),
     }
 }

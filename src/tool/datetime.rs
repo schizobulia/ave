@@ -1,8 +1,8 @@
 use chrono::prelude::*;
-use crate::app::global::OUTPUT_DIR;
+use crate::tool::file_tool::now_dir_path;
 
 //create_output_filename("mp4");
 pub fn create_output_filename(suffix: &str) -> String {
     let utc: DateTime<Local> = Local::now();
-    return format!("{}\\ave-{}-{}-{}-{}-{}-{}.{}", OUTPUT_DIR , utc.year(), utc.month(), utc.day(), utc.hour(), utc.minute(), utc.second(), suffix);
+    return format!("{}\\ave-{}-{}-{}-{}-{}-{}.{}", now_dir_path() , utc.year(), utc.month(), utc.day(), utc.hour(), utc.minute(), utc.second(), suffix);
 }
