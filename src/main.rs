@@ -40,8 +40,6 @@ struct MainView {
     file_home_btn: button::State,
     pick_list: pick_list::State<VideoContainerType>,
     select_video_type: VideoContainerType,
-    video_status: String,
-
 }
 
 impl Sandbox for MainView {
@@ -54,7 +52,6 @@ impl Sandbox for MainView {
             file_home_btn: button::State::default(),
             pick_list: pick_list::State::default(),
             select_video_type: VideoContainerType::Mp4,
-            video_status: String::from("未选择需要转换的文件"),
         }
     }
 
@@ -73,14 +70,13 @@ impl Sandbox for MainView {
                 match nfd2::open_file_dialog(None, None).expect("oh no") {
                     Response::Okay(file_path) => {
                         let (tx, rx) = mpsc::channel();
-                        self.video_status = String::from("转换中...");
 
                         let _handle = thread::spawn(move || {
                             let received: String = rx.recv().unwrap();
                             let result = gstr::conversion::conversion_video(
                                 &*file_path.to_string_lossy(), datetime::create_output_filename(received.as_str()).as_str());
                             if result.is_ok() {
-                                file_tool::open_directory("c:\\");
+                                file_tool::open_directory(app::global::OUTPUT_DIR);
                             }
                         });
                         let _tx_send = tx.send(self.select_video_type.to_string());
@@ -102,8 +98,7 @@ impl Sandbox for MainView {
             "home" => {
                 Container::new(page::home::render(
                     &mut self.audio_page_btn, &mut self.file_home_btn,
-                    &mut self.pick_list, &mut self.select_video_type,
-                    &mut self.video_status))
+                    &mut self.pick_list, &mut self.select_video_type))
                     .height(Length::Fill)
                     .width(Length::Fill)
                     .into()

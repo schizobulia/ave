@@ -7,7 +7,7 @@ use crate::model::vide_type::VideoContainerType;
 //首页
 pub fn render<'a>(audio: &'a mut State, file_btn: &'a mut State,
                   list_def: &'a mut pick_list::State<VideoContainerType>,
-                  select_video_type: &'a mut VideoContainerType, video_status: &'a mut String,
+                  select_video_type: &'a mut VideoContainerType
 ) -> Column<'a, Message> {
     let pick_list = PickList::new(
         list_def,
@@ -24,7 +24,7 @@ pub fn render<'a>(audio: &'a mut State, file_btn: &'a mut State,
     ).push(
         Column::new().padding(10).spacing(10)
             .push(
-                Text::new("请先选择需要最终转换的格式,然后选择文件,软件会自动转换")
+                Text::new("请先选择需要最终转换的格式,然后选择文件,软件会自动开始转换(成功之后将自动打开文件夹)")
             )
             .push(
                 Row::new().spacing(10)
@@ -35,9 +35,7 @@ pub fn render<'a>(audio: &'a mut State, file_btn: &'a mut State,
                         Button::new(file_btn, Text::new("选择文件")).padding(5)
                             .style(button_style::Button::Primary)
                             .on_press(Message::FileSelected)
-                    ).push(
-                    Text::new(video_status.as_str())
-                )
+                    )
             )
     )
 }
