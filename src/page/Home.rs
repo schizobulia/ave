@@ -1,6 +1,7 @@
 use iced::{Text, Button, Row, Column, PickList, Align};
 use crate::app::app_message::Message;
 use crate::style::button_style;
+use crate::style::pick_list_style;
 use crate::model::vide_type::VideoContainerType;
 
 use nfd2::Response;
@@ -18,7 +19,7 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
         &VideoContainerType::ALL[..],
         Some(home_state.select_video_type),
         Message::LanguageSelected,
-    );
+    ).style(pick_list_style::PickList);
     Column::new().spacing(20).push(
         Row::new().push(
             Button::new(&mut home_state.audio_page_btn, Text::new("音频处理")).padding(5)
