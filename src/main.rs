@@ -1,4 +1,4 @@
-// #![windows_subsystem = "windows"]
+#![windows_subsystem = "windows"]
 mod style;
 mod app;
 mod page;
@@ -6,14 +6,9 @@ mod gstr;
 mod tool;
 mod model;
 
-use iced::{Sandbox, Element, Settings, window, Container, button, Text, Length, pick_list, };
+use iced::{Sandbox, Element, Settings, window, Container, Text, Length };
 use app::app_message::Message;
-use nfd2::Response;
-use std::thread;
-use tool::datetime;
-use tool::file_tool;
-use model::vide_type::VideoContainerType;
-use std::sync::mpsc;
+use crate::app::state::home::HomeState;
 
 fn application() {
     let _result = MainView::run(Settings {
@@ -36,10 +31,7 @@ fn application() {
 #[derive(Default)]
 struct MainView {
     page: String,
-    audio_page_btn: button::State,
-    file_home_btn: button::State,
-    pick_list: pick_list::State<VideoContainerType>,
-    select_video_type: VideoContainerType,
+    home_page_state: HomeState
 }
 
 impl Sandbox for MainView {
@@ -48,10 +40,7 @@ impl Sandbox for MainView {
     fn new() -> MainView {
         MainView {
             page: String::from("home"),
-            audio_page_btn: button::State::default(),
-            file_home_btn: button::State::default(),
-            pick_list: pick_list::State::default(),
-            select_video_type: VideoContainerType::Mp4,
+            home_page_state: HomeState::default()
         }
     }
 
@@ -60,45 +49,24 @@ impl Sandbox for MainView {
     }
 
     fn update(&mut self, message: Message) {
-
-
         match message {
             Message::AudioPressed => {
                 self.page = String::from("audio");
             }
             Message::FileSelected => {
-                match nfd2::open_file_dialog(None, None).expect("oh no") {
-                    Response::Okay(file_path) => {
-                        let (tx, rx) = mpsc::channel();
-
-                        let _handle = thread::spawn(move || {
-                            let received: String = rx.recv().unwrap();
-                            let result = gstr::conversion::conversion_video(
-                                &*file_path.to_string_lossy(), datetime::create_output_filename(received.as_str()).as_str());
-                            if result.is_ok() {
-                                file_tool::open_directory(app::global::OUTPUT_DIR);
-                            }
-                        });
-                        let _tx_send = tx.send(self.select_video_type.to_string());
-                    }
-                    Response::OkayMultiple(files) => println!("Files {:?}", files),
-                    Response::Cancel => println!("User canceled"),
-                }
+                page::home::formatting_video(self.home_page_state.select_video_type.clone().to_string());
             }
             Message::LanguageSelected(vide_type) => {
-                self.select_video_type = vide_type;
+                self.home_page_state.select_video_type = vide_type;
             }
         }
     }
 
 
-
     fn view(&mut self) -> Element<Message> {
         match self.page.as_str() {
             "home" => {
-                Container::new(page::home::render(
-                    &mut self.audio_page_btn, &mut self.file_home_btn,
-                    &mut self.pick_list, &mut self.select_video_type))
+                Container::new(page::home::render(&mut self.home_page_state))
                     .height(Length::Fill)
                     .width(Length::Fill)
                     .into()

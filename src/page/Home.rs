@@ -1,23 +1,27 @@
-use iced::{Text, Button, Row, Column, PickList, pick_list};
+use iced::{Text, Button, Row, Column, PickList};
 use crate::app::app_message::Message;
 use crate::style::button_style;
-use iced::button::State;
 use crate::model::vide_type::VideoContainerType;
 
+use nfd2::Response;
+use std::thread;
+use crate::tool::datetime;
+use crate::tool::file_tool;
+use crate::app::global::OUTPUT_DIR;
+use crate::gstr;
+use crate::app::state::home::HomeState;
+
 //首页
-pub fn render<'a>(audio: &'a mut State, file_btn: &'a mut State,
-                  list_def: &'a mut pick_list::State<VideoContainerType>,
-                  select_video_type: &'a mut VideoContainerType
-) -> Column<'a, Message> {
+pub fn render(home_state: &mut HomeState) -> Column<Message> {
     let pick_list = PickList::new(
-        list_def,
+        &mut home_state.pick_list,
         &VideoContainerType::ALL[..],
-        Some(*select_video_type),
+        Some(home_state.select_video_type),
         Message::LanguageSelected,
     );
     Column::new().spacing(20).push(
         Row::new().push(
-            Button::new(audio, Text::new("音频处理")).padding(5)
+            Button::new(&mut home_state.audio_page_btn, Text::new("音频处理")).padding(5)
                 .style(button_style::Button::Primary)
                 .on_press(Message::AudioPressed)
         )
@@ -32,10 +36,27 @@ pub fn render<'a>(audio: &'a mut State, file_btn: &'a mut State,
                         pick_list
                     )
                     .push(
-                        Button::new(file_btn, Text::new("选择文件")).padding(5)
+                        Button::new(&mut home_state.file_home_btn, Text::new("选择文件")).padding(5)
                             .style(button_style::Button::Primary)
                             .on_press(Message::FileSelected)
                     )
             )
     )
+}
+
+//转换视频格式
+pub fn formatting_video(select_video_type: String) {
+    match nfd2::open_file_dialog(None, None).expect("oh no") {
+        Response::Okay(file_path) => {
+            let _handle = thread::spawn(move || {
+                let result = gstr::conversion::conversion_video(
+                    &*file_path.to_string_lossy(), datetime::create_output_filename(&*select_video_type).as_str());
+                if result.is_ok() {
+                    file_tool::open_directory(OUTPUT_DIR);
+                }
+            });
+        }
+        Response::OkayMultiple(_files) => {},
+        Response::Cancel => println!("User canceled"),
+    }
 }

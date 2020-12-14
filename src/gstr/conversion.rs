@@ -264,7 +264,7 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
                                 .cloned()
                                 .and_then(|v| v.0.lock().unwrap().take())
                                 .map(Result::Err)
-                                .expect("error-details message without actual error"),
+                                .expect("error-details state without actual error"),
                             _ => Err(ErrorMessage {
                                 src: msg
                                     .get_src()
