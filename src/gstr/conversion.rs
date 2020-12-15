@@ -129,6 +129,7 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
                 }
                 _ => {
                     eprintln!("Sorry, this format is not supported by this example.");
+                    std::process::exit(-1);
                 }
             };
 
@@ -181,7 +182,14 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
                 }
                     .into());
             }
-            MessageView::StateChanged(_s) => {
+            MessageView::StateChanged(s) => {
+                println!(
+                    "State changed from {:?}: {:?} -> {:?} ({:?})",
+                    s.get_src().map(|s| s.get_path_string()),
+                    s.get_old(),
+                    s.get_current(),
+                    s.get_pending()
+                );
             }
             _ => (),
         }
