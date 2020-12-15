@@ -1,14 +1,17 @@
 use iced::{pick_list, Color};
 
+
 pub struct PickList;
 
+//参考：https://www.litefeel.com/tools/ascii.php
 const ACTIVE: Color = Color::from_rgb(
-    0x72 as f32 / 255.0,
-    0x89 as f32 / 255.0,
-    0xDA as f32 / 255.0,
+    0x00 as f32 / 255.0,
+    0x7B as f32 / 255.0,
+    0xFF as f32 / 255.0,
 );
 
 impl pick_list::StyleSheet for PickList {
+
     fn menu(&self) -> pick_list::Menu {
         pick_list::Menu {
             text_color: Color::WHITE,
