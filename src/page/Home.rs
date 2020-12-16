@@ -11,6 +11,8 @@ use crate::tool::file_tool;
 use crate::gstr;
 use crate::app::state::home::HomeState;
 use crate::tool::file_tool::now_dir_path;
+use glib::ThreadPool;
+use std::sync::mpsc;
 
 //首页
 pub fn render(home_state: &mut HomeState) -> Column<Message> {
@@ -50,18 +52,31 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
 
 //转换视频格式
 pub fn formatting_video(select_video_type: String) {
-    match nfd2::open_file_dialog(None, None).expect("oh no") {
+    match nfd2::dialog_multiple().open().expect("oh no") {
         Response::Okay(file_path) => {
             let _handle = thread::spawn(move || {
                 let result = gstr::conversion::conversion_video(
                     format!("file:///{}", file_path.to_string_lossy()).as_str(),
-                    datetime::create_output_filename(&*select_video_type).as_str());
+                    datetime::create_output_filename(&select_video_type, "1").as_str());
                 if result.is_ok() {
                     file_tool::open_directory(now_dir_path().as_str());
                 }
             });
         }
-        Response::OkayMultiple(_files) => {}
+        Response::OkayMultiple(files) => {
+            let t_pool = ThreadPool::new_shared(Some(files.len() as u32)).unwrap();
+            let mut i = 0;
+            for file in files {
+                let tmp_type = select_video_type.clone();
+                i = i + 1;
+                t_pool.push(move || {
+                    gstr::conversion::conversion_video(
+                        format!("file:///{}", file.to_string_lossy()).as_str(),
+                        datetime::create_output_filename(&tmp_type, i.to_string().as_str()).as_str(),
+                    );
+                }).expect("thread_pool is err");
+            }
+        }
         Response::Cancel => println!("User canceled"),
     }
 }
