@@ -54,7 +54,7 @@ pub fn formatting_video(select_video_type: String) {
         Response::Okay(file_path) => {
             let _handle = thread::spawn(move || {
                 let result = gstr::conversion::conversion_video(
-                    &*file_path.to_string_lossy(),
+                    format!("file:///{}", file_path.to_string_lossy()).as_str(),
                     datetime::create_output_filename(&*select_video_type).as_str());
                 if result.is_ok() {
                     file_tool::open_directory(now_dir_path().as_str());

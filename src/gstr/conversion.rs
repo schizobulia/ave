@@ -61,15 +61,13 @@ fn handle_demux_pad_added(
     }
 }
 
-//input_file = "/home/test.mp4";
+//input_file = "file:///C:/Users/test.mp4";
 //output_file = "/home/test.flv";
 pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error> {
     gst::init()?;
-
     let pipeline = gst::Pipeline::new(None);
-
-    let src = gst::ElementFactory::make("filesrc", None).map_err(|_| MissingElement("filesrc"))?;
-
+    let src = gst::Element::make_from_uri(gst::URIType::Src, input_file, None)
+        .expect("We do not seem to support this uri");
     let typefinder =
         gst::ElementFactory::make("typefind", None).map_err(|_| MissingElement("typefind"))?;
     let queue =
@@ -79,8 +77,6 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
     let sink =
         gst::ElementFactory::make("filesink", None).map_err(|_| MissingElement("filesink"))?;
 
-    src.set_property("location", &input_file)
-        .expect("setting input_file Property failed");
     sink.set_property("location", &output_file)
         .expect("setting location property failed");
     // Increase the queue capacity to 100MB to avoid a stalling pipeline
