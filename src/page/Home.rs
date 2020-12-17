@@ -10,7 +10,6 @@ use crate::tool::file_tool;
 use crate::gstr;
 use crate::app::state::home::HomeState;
 use crate::tool::file_tool::now_dir_path;
-use glib::ThreadPool;
 
 //首页
 pub fn render(home_state: &mut HomeState) -> Column<Message> {
@@ -22,15 +21,15 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
     ).style(pick_list_style::PickList);
     Column::new().spacing(20).push(
         Row::new().push(
-            Button::new(&mut home_state.audio_page_btn, Text::new("音频处理")).padding(5)
-                .style(button_style::Button::Primary)
+            Button::new(&mut home_state.audio_page_btn, Text::new("音频处理(目前正在开发中)")).padding(5)
+                .style(button_style::Button::Info)
                 .on_press(Message::AudioPressed)
         )
     ).push(
         Column::new().padding(10).spacing(10)
             .push(
                 Text::new("请先选择需要最终转换的格式,然后选择文件,\
-                软件会自动开始转换(成功之后将自动打开文件夹)").size(18)
+                软件会自动开始转换").size(18)
             )
             .push(
                 Row::new().spacing(10).align_items(Align::Center)
@@ -55,22 +54,22 @@ pub fn formatting_video(select_video_type: String) {
             let _handle = thread::spawn(move || {
                 let result = gstr::conversion::conversion_video(
                     format!("file:///{}", file_path.to_string_lossy()).as_str(),
-                    file_tool::create_output_filename(&select_video_type, &file_tool::get_filename(file_path.to_string_lossy().to_string())).as_str());
+                    file_tool::create_output_filename(&select_video_type,
+                                                      &file_tool::get_filename(file_path.to_string_lossy().to_string())).as_str());
                 if result.is_ok() {
                     file_tool::open_directory(now_dir_path().as_str());
                 }
             });
         }
         Response::OkayMultiple(files) => {
-            let t_pool = ThreadPool::new_shared(Some(files.len() as u32)).unwrap();
-            for file in files {
+            for file in  files {
                 let tmp_type = select_video_type.clone();
-                t_pool.push(move || {
+                thread::spawn(move || {
                     let _res = gstr::conversion::conversion_video(
                         format!("file:///{}", file.to_string_lossy()).as_str(),
                         file_tool::create_output_filename(&tmp_type, &file_tool::get_filename(file.to_string_lossy().to_string())).as_str(),
                     );
-                }).expect("thread_pool is err");
+                });
             }
         }
         Response::Cancel => println!("User canceled"),

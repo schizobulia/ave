@@ -46,13 +46,13 @@ impl Sandbox for MainView {
     }
 
     fn title(&self) -> String {
-        String::from("AVE")
+        String::from("AVE  (项目处于开发阶段,我的邮箱：2833324528@qq.com)")
     }
 
     fn update(&mut self, message: Message) {
         match message {
             Message::AudioPressed => {
-                self.page = String::from("audio");
+                // self.page = String::from("audio");
             }
             Message::FileSelected => {
                 page::home::formatting_video(self.home_page_state.select_video_type.clone().to_string());
