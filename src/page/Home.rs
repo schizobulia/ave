@@ -6,13 +6,11 @@ use crate::model::vide_type::VideoContainerType;
 
 use nfd2::Response;
 use std::thread;
-use crate::tool::datetime;
 use crate::tool::file_tool;
 use crate::gstr;
 use crate::app::state::home::HomeState;
 use crate::tool::file_tool::now_dir_path;
 use glib::ThreadPool;
-use std::sync::mpsc;
 
 //首页
 pub fn render(home_state: &mut HomeState) -> Column<Message> {
@@ -57,7 +55,7 @@ pub fn formatting_video(select_video_type: String) {
             let _handle = thread::spawn(move || {
                 let result = gstr::conversion::conversion_video(
                     format!("file:///{}", file_path.to_string_lossy()).as_str(),
-                    datetime::create_output_filename(&select_video_type, "1").as_str());
+                    file_tool::create_output_filename(&select_video_type, &file_tool::get_filename(file_path.to_string_lossy().to_string())).as_str());
                 if result.is_ok() {
                     file_tool::open_directory(now_dir_path().as_str());
                 }
@@ -65,14 +63,12 @@ pub fn formatting_video(select_video_type: String) {
         }
         Response::OkayMultiple(files) => {
             let t_pool = ThreadPool::new_shared(Some(files.len() as u32)).unwrap();
-            let mut i = 0;
             for file in files {
                 let tmp_type = select_video_type.clone();
-                i = i + 1;
                 t_pool.push(move || {
-                    gstr::conversion::conversion_video(
+                    let _res = gstr::conversion::conversion_video(
                         format!("file:///{}", file.to_string_lossy()).as_str(),
-                        datetime::create_output_filename(&tmp_type, i.to_string().as_str()).as_str(),
+                        file_tool::create_output_filename(&tmp_type, &file_tool::get_filename(file.to_string_lossy().to_string())).as_str(),
                     );
                 }).expect("thread_pool is err");
             }
