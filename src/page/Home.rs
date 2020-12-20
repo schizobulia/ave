@@ -1,4 +1,10 @@
-use iced::{Text, Button, Row, Column, PickList, Align};
+use iced::Align;
+use iced::PickList;
+use iced::Column;
+use iced::Row;
+use iced::Button;
+use iced::Text;
+use iced::Scrollable;
 use crate::app::app_message::Message;
 use crate::style::button_style;
 use crate::style::pick_list_style;
@@ -44,13 +50,21 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
                     Text::new(&home_state.create_video_path).size(18)
                 )
             )
+    ).push(
+        Scrollable::new(&mut home_state.scroll_comd_state)
+            .padding(10)
+            .max_width(500)
+            .max_height(350)
+            .push(Text::new(
+                &home_state.msg_conversion_statue,
+            ))
     )
 }
 
 //转换视频格式
-pub fn formatting_video(select_video_type: String) {
+pub fn formatting_video(home_state: &mut HomeState) {
     use futures::executor::ThreadPool;
-
+    let select_video_type = home_state.select_video_type.to_string();
     match nfd2::dialog_multiple().open().expect("oh no") {
         Response::Okay(file_path) => {
             let _handle = thread::spawn(move || {
@@ -76,6 +90,7 @@ pub fn formatting_video(select_video_type: String) {
                 file_tool::open_directory(now_dir_path().as_str());
             };
             pool.spawn_ok(future);
+            // home_state.msg_conversion_statue = String::from("转换成功");
         }
         Response::Cancel => println!("User canceled"),
     }

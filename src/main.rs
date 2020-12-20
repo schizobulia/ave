@@ -1,4 +1,4 @@
-#![windows_subsystem = "windows"]
+// #![windows_subsystem = "windows"]
 
 mod style;
 mod app;
@@ -7,7 +7,7 @@ mod gstr;
 mod tool;
 mod model;
 
-use iced::{Sandbox, Element, Settings, window, Container, Text, Length};
+use iced::{Application, executor, Element, Settings, window, Container, Text, Length, Command};
 use app::app_message::Message;
 use crate::app::state::home::HomeState;
 use crate::tool::file_tool::now_dir_path;
@@ -36,35 +36,39 @@ struct MainView {
     home_page_state: HomeState,
 }
 
-impl Sandbox for MainView {
+impl Application for MainView {
+    type Executor = executor::Default;
     type Message = Message;
+    type Flags = ();
 
-    fn new() -> MainView {
-        MainView {
+    fn new(_flags: ()) -> (MainView, Command<Self::Message>) {
+        (MainView {
             page: String::from("home"),
             home_page_state: HomeState::default(),
-        }
+        }, Command::none())
     }
 
     fn title(&self) -> String {
         String::from("AVE  (项目处于开发阶段,我的邮箱：2833324528@qq.com)")
     }
 
-    fn update(&mut self, message: Message) {
+    fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
         match message {
             Message::AudioPressed => {
                 // self.page = String::from("audio");
             }
             Message::FileSelected => {
-                page::home::formatting_video(self.home_page_state.select_video_type.clone().to_string());
+                page::home::formatting_video(
+                    &mut self.home_page_state);
                 self.home_page_state.create_video_path = format!("生成视频目录：{}", &*now_dir_path());
             }
+
             Message::LanguageSelected(vide_type) => {
                 self.home_page_state.select_video_type = vide_type;
             }
         }
+        Command::none()
     }
-
 
     fn view(&mut self) -> Element<Message> {
         match self.page.as_str() {
