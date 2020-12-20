@@ -1,4 +1,5 @@
 #![windows_subsystem = "windows"]
+
 mod style;
 mod app;
 mod page;
@@ -6,7 +7,7 @@ mod gstr;
 mod tool;
 mod model;
 
-use iced::{Sandbox, Element, Settings, window, Container, Text, Length };
+use iced::{Sandbox, Element, Settings, window, Container, Text, Length};
 use app::app_message::Message;
 use crate::app::state::home::HomeState;
 use crate::tool::file_tool::now_dir_path;
@@ -32,7 +33,7 @@ fn application() {
 #[derive(Default)]
 struct MainView {
     page: String,
-    home_page_state: HomeState
+    home_page_state: HomeState,
 }
 
 impl Sandbox for MainView {
@@ -41,7 +42,7 @@ impl Sandbox for MainView {
     fn new() -> MainView {
         MainView {
             page: String::from("home"),
-            home_page_state: HomeState::default()
+            home_page_state: HomeState::default(),
         }
     }
 

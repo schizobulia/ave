@@ -29,7 +29,7 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
         Column::new().padding(10).spacing(10)
             .push(
                 Text::new("请先选择需要最终转换的格式,然后选择文件,\
-                软件会自动开始转换").size(18)
+                软件会自动开始转换,成功之后将自动打开文件夹").size(18)
             )
             .push(
                 Row::new().spacing(10).align_items(Align::Center)
@@ -49,6 +49,8 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
 
 //转换视频格式
 pub fn formatting_video(select_video_type: String) {
+    use futures::executor::ThreadPool;
+
     match nfd2::dialog_multiple().open().expect("oh no") {
         Response::Okay(file_path) => {
             let _handle = thread::spawn(move || {
@@ -62,15 +64,18 @@ pub fn formatting_video(select_video_type: String) {
             });
         }
         Response::OkayMultiple(files) => {
-            for file in  files {
-                let tmp_type = select_video_type.clone();
-                thread::spawn(move || {
-                    let _res = gstr::conversion::conversion_video(
+            let pool = ThreadPool::new().unwrap();
+            let future = async move {
+                for file in files {
+                    let tmp_type = select_video_type.clone();
+                    let _result = gstr::conversion::conversion_video(
                         format!("file:///{}", file.to_string_lossy()).as_str(),
                         file_tool::create_output_filename(&tmp_type, &file_tool::get_filename(file.to_string_lossy().to_string())).as_str(),
                     );
-                });
-            }
+                }
+                file_tool::open_directory(now_dir_path().as_str());
+            };
+            pool.spawn_ok(future);
         }
         Response::Cancel => println!("User canceled"),
     }
