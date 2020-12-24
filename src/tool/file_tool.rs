@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 use std::env;
 use crate::tool::datetime::now_time;
 
+#[allow(dead_code)]
 pub fn open_directory(path: &str) {
     match nfd2::open_file_dialog(None, Some(Path::new(&path))).expect("oh no") {
         Response::Okay(_file_path) => {}
@@ -25,4 +26,18 @@ pub fn get_filename(file_path: String) -> String {
 //根据后缀和旧的文件名创建新文件
 pub fn create_output_filename(suffix: &str, old_name: &str) -> String {
     return format!("{}\\ave-{}-{}.{}", now_dir_path(), now_time(), old_name, suffix);
+}
+
+pub fn get_file_list() -> Vec<PathBuf> {
+    match nfd2::dialog_multiple().open().expect("oh no") {
+        Response::Okay(file_path) => {
+            vec![file_path]
+        }
+        Response::OkayMultiple(files) => {
+            files
+        }
+        Response::Cancel => {
+            vec![]
+        }
+    }
 }

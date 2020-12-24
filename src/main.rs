@@ -1,4 +1,4 @@
-// #![windows_subsystem = "windows"]
+#![windows_subsystem = "windows"]
 
 mod style;
 mod app;
@@ -11,8 +11,6 @@ use iced::{Application, executor, Element, Settings, window, Container, Text, Le
 use app::app_message::Message;
 use crate::app::state::home::HomeState;
 use crate::tool::file_tool::now_dir_path;
-use std::thread;
-use std::time::Duration;
 
 fn application() {
     let _result = MainView::run(Settings {
@@ -61,17 +59,18 @@ impl Application for MainView {
             }
             Message::FileSelected => {
                 self.home_page_state.create_video_path = format!("生成视频目录：{}", &*now_dir_path());
-                let tmp_type: String = self.home_page_state.select_video_type.to_string().clone();
-                return Command::perform(page::home::formatting_video(
-                    tmp_type), Message::Ak);
+                let com_arr = page::home::get_command(self.home_page_state.select_video_type.to_string());
+                return Command::batch(com_arr);
             }
 
             Message::LanguageSelected(vide_type) => {
                 self.home_page_state.select_video_type = vide_type;
             }
 
-            Message::Ak(msg) => {
-                self.home_page_state.msg_conversion_statue = msg;
+            Message::ReceiveMsg(msg) => {
+                let old_msg = &self.home_page_state.msg_conversion_statue;
+                self.home_page_state.msg_conversion_statue =
+                    format!("{}{}\r\n", old_msg, msg);
             }
         }
         Command::none()
@@ -96,7 +95,6 @@ impl Application for MainView {
         }
     }
 }
-
 
 fn main() {
     application();

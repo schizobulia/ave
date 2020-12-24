@@ -9,13 +9,10 @@ use crate::app::app_message::Message;
 use crate::style::button_style;
 use crate::style::pick_list_style;
 use crate::model::vide_type::VideoContainerType;
-
-use nfd2::Response;
-use std::thread;
 use crate::tool::file_tool;
 use crate::gstr;
 use crate::app::state::home::HomeState;
-use crate::tool::file_tool::now_dir_path;
+use crate::tool::file_tool::{get_file_list};
 use std::path::PathBuf;
 
 //首页
@@ -62,28 +59,30 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
     )
 }
 
-fn get_file_list() -> Vec<PathBuf> {
-    match nfd2::dialog_multiple().open().expect("oh no") {
-        Response::Okay(file_path) => {
-            vec![file_path]
-        }
-        Response::OkayMultiple(files) => {
-            files
-        }
-        Response::Cancel => {
-            vec![]
-        }
+
+pub fn get_command(select_type: String) -> Vec<Command<Message>> {
+    let file_list = get_file_list();
+    let mut com_arr: Vec<Command<Message>> = Vec::new();
+    for file in file_list {
+        let tmp_type = select_type.clone();
+        com_arr.push(Command::perform(formatting_video(
+            tmp_type, file), Message::ReceiveMsg));
     }
+    com_arr
 }
 
 //转换视频格式
-pub async fn formatting_video(tmp_type: String) -> String {
-    let files = get_file_list();
-    for file in files {
-        let result = gstr::conversion::conversion_video(
-            format!("file:///{}", file.to_string_lossy()).as_str(),
-            file_tool::create_output_filename(tmp_type.as_str(), &file_tool::get_filename(file.to_string_lossy().to_string())).as_str(),
-        );
+async fn formatting_video(tmp_type: String, file: PathBuf) -> String {
+    let old_file_name = &file_tool::get_filename(file.to_string_lossy().to_string());
+    let result = gstr::conversion::conversion_video(
+        format!("file:///{}", file.to_string_lossy()).as_str(),
+        file_tool::create_output_filename(tmp_type.as_str(), &old_file_name).as_str(),
+    );
+    let mut res = String::from(old_file_name);
+    if result.is_ok() {
+        res.push_str("转换成功...");
+    } else {
+        res.push_str("转换失败");
     }
-    String::from("ok")
+    res
 }
