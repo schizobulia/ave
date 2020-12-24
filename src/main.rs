@@ -11,6 +11,8 @@ use iced::{Application, executor, Element, Settings, window, Container, Text, Le
 use app::app_message::Message;
 use crate::app::state::home::HomeState;
 use crate::tool::file_tool::now_dir_path;
+use std::thread;
+use std::time::Duration;
 
 fn application() {
     let _result = MainView::run(Settings {
@@ -58,13 +60,18 @@ impl Application for MainView {
                 // self.page = String::from("audio");
             }
             Message::FileSelected => {
-                page::home::formatting_video(
-                    &mut self.home_page_state);
                 self.home_page_state.create_video_path = format!("生成视频目录：{}", &*now_dir_path());
+                let tmp_type: String = self.home_page_state.select_video_type.to_string().clone();
+                return Command::perform(page::home::formatting_video(
+                    tmp_type), Message::Ak);
             }
 
             Message::LanguageSelected(vide_type) => {
                 self.home_page_state.select_video_type = vide_type;
+            }
+
+            Message::Ak(msg) => {
+                self.home_page_state.msg_conversion_statue = msg;
             }
         }
         Command::none()
@@ -89,6 +96,7 @@ impl Application for MainView {
         }
     }
 }
+
 
 fn main() {
     application();

@@ -1,4 +1,4 @@
-use iced::Align;
+use iced::{Align, Command};
 use iced::PickList;
 use iced::Column;
 use iced::Row;
@@ -16,6 +16,7 @@ use crate::tool::file_tool;
 use crate::gstr;
 use crate::app::state::home::HomeState;
 use crate::tool::file_tool::now_dir_path;
+use std::path::PathBuf;
 
 //首页
 pub fn render(home_state: &mut HomeState) -> Column<Message> {
@@ -61,37 +62,28 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
     )
 }
 
-//转换视频格式
-pub fn formatting_video(home_state: &mut HomeState) {
-    use futures::executor::ThreadPool;
-    let select_video_type = home_state.select_video_type.to_string();
+fn get_file_list() -> Vec<PathBuf> {
     match nfd2::dialog_multiple().open().expect("oh no") {
         Response::Okay(file_path) => {
-            let _handle = thread::spawn(move || {
-                let result = gstr::conversion::conversion_video(
-                    format!("file:///{}", file_path.to_string_lossy()).as_str(),
-                    file_tool::create_output_filename(&select_video_type,
-                                                      &file_tool::get_filename(file_path.to_string_lossy().to_string())).as_str());
-                if result.is_ok() {
-                    file_tool::open_directory(now_dir_path().as_str());
-                }
-            });
+            vec![file_path]
         }
         Response::OkayMultiple(files) => {
-            let pool = ThreadPool::new().unwrap();
-            let future = async move {
-                for file in files {
-                    let tmp_type = select_video_type.clone();
-                    let _result = gstr::conversion::conversion_video(
-                        format!("file:///{}", file.to_string_lossy()).as_str(),
-                        file_tool::create_output_filename(&tmp_type, &file_tool::get_filename(file.to_string_lossy().to_string())).as_str(),
-                    );
-                }
-                file_tool::open_directory(now_dir_path().as_str());
-            };
-            pool.spawn_ok(future);
-            // home_state.msg_conversion_statue = String::from("转换成功");
+            files
         }
-        Response::Cancel => println!("User canceled"),
+        Response::Cancel => {
+            vec![]
+        }
     }
+}
+
+//转换视频格式
+pub async fn formatting_video(tmp_type: String) -> String {
+    let files = get_file_list();
+    for file in files {
+        let result = gstr::conversion::conversion_video(
+            format!("file:///{}", file.to_string_lossy()).as_str(),
+            file_tool::create_output_filename(tmp_type.as_str(), &file_tool::get_filename(file.to_string_lossy().to_string())).as_str(),
+        );
+    }
+    String::from("ok")
 }
