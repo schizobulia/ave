@@ -4,3 +4,5 @@ pkg/
 **/*.rs.bk
 Cargo.lock
 .cargo/
+
+/test/output.mp4

@@ -195,3 +195,15 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
 
     Ok(())
 }
+
+#[test]
+fn conversion_video_test(){
+    use crate::tool::file_tool::now_dir_path;
+    let mut test_path = String::from("file:///");
+    let tmp_dir = now_dir_path();
+    test_path.push_str(tmp_dir.as_str());
+    test_path.push_str("/test/input.mp4");
+    println!("{}", test_path);
+    let result = conversion_video(test_path.as_str(), format!("{}{}", tmp_dir, "/test/output.mp4").as_str());
+    assert_eq!(result.is_ok(), true);
+}
