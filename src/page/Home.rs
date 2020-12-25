@@ -1,4 +1,4 @@
-use iced::{Align, Command};
+use iced::{Align, Command, Container, Application, Length, Color};
 use iced::PickList;
 use iced::Column;
 use iced::Row;
@@ -8,6 +8,8 @@ use iced::Scrollable;
 use crate::app::app_message::Message;
 use crate::style::button_style;
 use crate::style::pick_list_style;
+use crate::style::scrollable_style;
+use crate::style::container_style;
 use crate::model::vide_type::VideoContainerType;
 
 use nfd2::Response;
@@ -52,13 +54,15 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
                 )
             )
     ).push(
-        Scrollable::new(&mut home_state.scroll_comd_state)
+        Container::new(Scrollable::new(&mut home_state.scroll_comd_state)
             .padding(10)
-            .max_width(500)
-            .max_height(350)
+            .width(Length::Fill)
+            .height(Length::Fill)
+            .style(scrollable_style::Scrollable)
             .push(Text::new(
                 &home_state.msg_conversion_statue,
-            ))
+            ))).height(Length::Units(500))
+            .height(Length::Fill).style(container_style::Container::default())
     )
 }
 
