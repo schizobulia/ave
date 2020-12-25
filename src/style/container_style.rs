@@ -1,6 +1,7 @@
 use iced::{container, Color, Background};
 
 //容器样式
+#[allow(dead_code)]
 pub struct Container {
     pub(crate) background: Color,
     pub(crate) text_color: Color,

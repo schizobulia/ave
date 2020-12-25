@@ -1,4 +1,4 @@
-use iced::{Align, Command, Container, Application, Length, Color};
+use iced::{Align, Command, Container, Length};
 use iced::PickList;
 use iced::Column;
 use iced::Row;
@@ -16,6 +16,7 @@ use crate::gstr;
 use crate::app::state::home::HomeState;
 use crate::tool::file_tool::{get_file_list};
 use std::path::PathBuf;
+use crate::model::receive_msg::ReceiveMsg;
 
 //首页
 pub fn render(home_state: &mut HomeState) -> Column<Message> {
@@ -76,17 +77,18 @@ pub fn get_command(select_type: String) -> Vec<Command<Message>> {
 }
 
 //转换视频格式
-async fn formatting_video(tmp_type: String, file: PathBuf) -> String {
-    let old_file_name = &file_tool::get_filename(file.to_string_lossy().to_string());
+async fn formatting_video(tmp_type: String, file: PathBuf) -> ReceiveMsg {
+    let filename: String = file.to_string_lossy().to_string();
+    let old_file_name = &file_tool::get_filename(filename.clone());
     let result = gstr::conversion::conversion_video(
         format!("file:///{}", file.to_string_lossy()).as_str(),
         file_tool::create_output_filename(tmp_type.as_str(), &old_file_name).as_str(),
     );
-    let mut res = String::from(old_file_name);
+    let res: ReceiveMsg;
     if result.is_ok() {
-        res.push_str("转换成功...");
+        res = ReceiveMsg::new(filename.clone(), String::from("转换成功"));
     } else {
-        res.push_str("转换失败");
+        res = ReceiveMsg::new(filename, String::from("转换失败"));
     }
     res
 }

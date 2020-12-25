@@ -22,7 +22,7 @@ impl Default for HomeState {
             select_video_type: VideoContainerType::Mp4,
             create_video_path: String::default(),
             scroll_comd_state: scrollable::State::new(),
-            msg_conversion_statue: String::from("...\r\n"),
+            msg_conversion_statue: String::from("控制台...\r\n"),
         }
     }
 }

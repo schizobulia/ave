@@ -70,7 +70,7 @@ impl Application for MainView {
             Message::ReceiveMsg(msg) => {
                 let old_msg = &self.home_page_state.msg_conversion_statue;
                 self.home_page_state.msg_conversion_statue =
-                    format!("{}{}\r\n", old_msg, msg);
+                    format!("{}{}\r\n", old_msg, msg.to_string());
             }
         }
         Command::none()
