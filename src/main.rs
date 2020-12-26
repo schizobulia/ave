@@ -1,4 +1,4 @@
-// #![windows_subsystem = "windows"]
+#![windows_subsystem = "windows"]
 
 mod style;
 mod app;
@@ -10,7 +10,8 @@ mod model;
 use iced::{Application, executor, Element, Settings, window, Container, Text, Length, Command};
 use app::app_message::Message;
 use crate::app::state::home::HomeState;
-use crate::tool::file_tool::now_dir_path;
+use crate::tool::file_tool::{now_dir_path, mkdir};
+use crate::tool::datetime::now_time;
 
 fn application() {
     let _result = MainView::run(Settings {
@@ -58,8 +59,11 @@ impl Application for MainView {
                 // self.page = String::from("audio");
             }
             Message::FileSelected => {
-                self.home_page_state.create_video_path = format!("生成视频目录：{}", &*now_dir_path());
-                let com_arr = page::home::get_command(self.home_page_state.select_video_type.to_string());
+                let dir = mkdir(format!("{}\\out\\video\\{}", now_dir_path(), now_time()));
+                self.home_page_state.create_video_path = format!("生成视频目录：{}", dir);
+                let com_arr = page::home::get_command(
+                    self.home_page_state.select_video_type.to_string(),
+                    dir);
                 return Command::batch(com_arr);
             }
 

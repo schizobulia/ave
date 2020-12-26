@@ -4,7 +4,7 @@ use crate::style::{button_style, pick_list_style, scrollable_style, container_st
 use crate::model::vide_type::VideoContainerType;
 use crate::gstr;
 use crate::app::state::home::HomeState;
-use crate::tool::file_tool::{get_file_list, create_output_filename, get_filename};
+use crate::tool::file_tool::{get_file_list, get_filename};
 use std::path::PathBuf;
 use crate::model::receive_msg::ReceiveMsg;
 
@@ -55,24 +55,24 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
 }
 
 
-pub fn get_command(select_type: String) -> Vec<Command<Message>> {
+pub fn get_command(select_type: String, t_path: String) -> Vec<Command<Message>> {
     let file_list = get_file_list(VideoContainerType::default().get_all_type().as_str());
     let mut com_arr: Vec<Command<Message>> = Vec::new();
     for file in file_list {
         let tmp_type = select_type.clone();
         com_arr.push(Command::perform(formatting_video(
-            tmp_type, file), Message::ReceiveMsg));
+            tmp_type.to_string(), file, t_path.clone()), Message::ReceiveMsg));
     }
     com_arr
 }
 
 //转换视频格式
-async fn formatting_video(tmp_type: String, file: PathBuf) -> ReceiveMsg {
+async fn formatting_video(tmp_type: String, file: PathBuf, t_path: String) -> ReceiveMsg {
     let filename: String = file.to_string_lossy().to_string();
     let old_file_name = &get_filename(filename.clone());
     let result = gstr::conversion::conversion_video(
         format!("file:///{}", file.to_string_lossy()).as_str(),
-        create_output_filename(tmp_type.as_str(), &old_file_name).as_str(),
+        format!("{}//{}.{}", t_path, old_file_name, tmp_type).as_str(),
     );
     let res: ReceiveMsg;
     if result.is_ok() {

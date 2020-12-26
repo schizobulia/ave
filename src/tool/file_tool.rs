@@ -1,7 +1,7 @@
 use nfd2::Response;
 use std::path::{Path, PathBuf};
 use std::env;
-use crate::tool::datetime::now_time;
+use std::fs;
 
 #[allow(dead_code)]
 pub fn open_directory(path: &str) {
@@ -23,9 +23,14 @@ pub fn get_filename(file_path: String) -> String {
     option.file_stem().unwrap().to_string_lossy().to_string()
 }
 
-//根据后缀和旧的文件名创建新文件
-pub fn create_output_filename(suffix: &str, old_name: &str) -> String {
-    return format!("{}\\ave-{}-{}.{}", now_dir_path(), now_time(), old_name, suffix);
+pub fn mkdir(p: String) -> String {
+    let pa = Path::new(p.as_str());
+    if pa.is_dir() {
+        p
+    } else {
+        fs::create_dir_all(pa).expect("create dir is fail");
+        p
+    }
 }
 
 pub fn get_file_list(filter: &str) -> Vec<PathBuf> {
