@@ -1,20 +1,10 @@
-use iced::{Align, Command, Container, Length};
-use iced::PickList;
-use iced::Column;
-use iced::Row;
-use iced::Button;
-use iced::Text;
-use iced::Scrollable;
+use iced::{Align, Command, Container, Length, PickList, Column, Row, Button, Text, Scrollable};
 use crate::app::app_message::Message;
-use crate::style::button_style;
-use crate::style::pick_list_style;
-use crate::style::scrollable_style;
-use crate::style::container_style;
+use crate::style::{button_style, pick_list_style, scrollable_style, container_style};
 use crate::model::vide_type::VideoContainerType;
-use crate::tool::file_tool;
 use crate::gstr;
 use crate::app::state::home::HomeState;
-use crate::tool::file_tool::{get_file_list};
+use crate::tool::file_tool::{get_file_list, create_output_filename, get_filename};
 use std::path::PathBuf;
 use crate::model::receive_msg::ReceiveMsg;
 
@@ -36,7 +26,7 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
         Column::new().padding(10).spacing(10)
             .push(
                 Text::new("请先选择需要最终转换的格式,然后选择文件,\
-                软件会自动开始转换,成功之后将自动打开文件夹").size(18)
+                软件会自动开始转换").size(18)
             )
             .push(
                 Row::new().spacing(10).align_items(Align::Center)
@@ -59,14 +49,14 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
             .style(scrollable_style::Scrollable)
             .push(Text::new(
                 &home_state.msg_conversion_statue,
-            ))).height(Length::Units(500))
+            ).size(16))).height(Length::Units(500))
             .height(Length::Fill).style(container_style::Container::default())
     )
 }
 
 
 pub fn get_command(select_type: String) -> Vec<Command<Message>> {
-    let file_list = get_file_list();
+    let file_list = get_file_list(VideoContainerType::default().get_all_type().as_str());
     let mut com_arr: Vec<Command<Message>> = Vec::new();
     for file in file_list {
         let tmp_type = select_type.clone();
@@ -79,10 +69,10 @@ pub fn get_command(select_type: String) -> Vec<Command<Message>> {
 //转换视频格式
 async fn formatting_video(tmp_type: String, file: PathBuf) -> ReceiveMsg {
     let filename: String = file.to_string_lossy().to_string();
-    let old_file_name = &file_tool::get_filename(filename.clone());
+    let old_file_name = &get_filename(filename.clone());
     let result = gstr::conversion::conversion_video(
         format!("file:///{}", file.to_string_lossy()).as_str(),
-        file_tool::create_output_filename(tmp_type.as_str(), &old_file_name).as_str(),
+        create_output_filename(tmp_type.as_str(), &old_file_name).as_str(),
     );
     let res: ReceiveMsg;
     if result.is_ok() {

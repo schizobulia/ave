@@ -28,8 +28,8 @@ pub fn create_output_filename(suffix: &str, old_name: &str) -> String {
     return format!("{}\\ave-{}-{}.{}", now_dir_path(), now_time(), old_name, suffix);
 }
 
-pub fn get_file_list() -> Vec<PathBuf> {
-    match nfd2::dialog_multiple().open().expect("oh no") {
+pub fn get_file_list(filter: &str) -> Vec<PathBuf> {
+    match nfd2::dialog_multiple().filter(filter).open().expect("oh no") {
         Response::Okay(file_path) => {
             vec![file_path]
         }

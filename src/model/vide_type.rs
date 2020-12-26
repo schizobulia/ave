@@ -27,7 +27,7 @@ pub enum VideoContainerType {
     Qt,
     Fli,
     Flc,
-    Mod
+    Mod,
 }
 
 impl VideoContainerType {
@@ -61,6 +61,17 @@ impl VideoContainerType {
         VideoContainerType::Flc,
         VideoContainerType::Mod
     ];
+
+    //获取所有类型
+    pub(crate) fn get_all_type(&self) -> String{
+        let all_data = Self::ALL;
+        let mut result = String::new();
+        for all_datum in all_data.iter() {
+            result.push_str(all_datum.to_string().as_str());
+            result.push_str(",");
+        }
+        result
+    }
 }
 
 impl Default for VideoContainerType {
