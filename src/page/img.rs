@@ -1,4 +1,4 @@
-use iced::{{Column, Text}, Row, Align, Button, Container, Scrollable, Length, Command};
+use iced::{{Column, Text}, Row, Align, Button, Container, Scrollable, Length, Command, Image};
 use crate::app::app_message::Message;
 use crate::style::{button_style, scrollable_style, container_style};
 use crate::app::state::img::ImgState;
@@ -9,21 +9,26 @@ use crate::model::receive_msg::ReceiveMsg;
 
 
 pub fn render(img_state: &mut ImgState) -> Column<Message> {
-    Column::new().push(
-        Column::new().padding(10).spacing(10)
+    let home_img = Image::new("resources/home.png");
+    Column::new().spacing(15).push(
+        Row::new().padding(5).spacing(10)
             .push(
-                Text::new("请先选择图片,软件会自动开始转换").size(18)
+                Button::new(&mut img_state.break_btn, home_img.width(Length::Units(20)).height(Length::Units(20)))
+                    .on_press(Message::GoHome).style(button_style::Button::Light)
             )
-            .push(
-                Row::new().spacing(10).align_items(Align::Center)
-                    .push(
-                        Button::new(&mut img_state.file_img_btn, Text::new("选择文件")).padding(5)
-                            .style(button_style::Button::Primary)
-                            .on_press(Message::FileSelected)
-                    ).push(
-                    Text::new(&img_state.create_img_path).size(18)
-                )
+    ).push(
+        Column::new().padding(5).spacing(10).push(
+            Text::new("请先选择图片,软件会自动开始压缩").size(18)
+        ).push(
+            Row::new().spacing(10).align_items(Align::Center)
+                .push(
+                    Button::new(&mut img_state.file_img_btn, Text::new("选择文件")).padding(5)
+                        .style(button_style::Button::Primary)
+                        .on_press(Message::FileSelected)
+                ).push(
+                Text::new(&img_state.create_img_path).size(18)
             )
+        )
     ).push(
         Container::new(Scrollable::new(&mut img_state.scroll_comd_state)
             .padding(10)

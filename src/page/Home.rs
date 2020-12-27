@@ -16,18 +16,19 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
         Some(home_state.select_video_type),
         Message::LanguageSelected,
     ).style(pick_list_style::PickList);
-    Column::new().spacing(20).push(
-        Row::new().push(
-            Button::new(&mut home_state.img_page_btn, Text::new("图片处理"))
-                .style(button_style::Button::Primary)
-                .on_press(Message::ImgPressed)
-        ).push(
+    Column::new().spacing(15).push(
+        Row::new().padding(5).spacing(10)
+            .push(
+                Button::new(&mut home_state.img_page_btn, Text::new("图片处理"))
+                    .style(button_style::Button::Primary)
+                    .on_press(Message::ImgPressed)
+            ).push(
             Button::new(&mut home_state.audio_page_btn, Text::new("音频处理(目前正在开发中)")).padding(5)
                 .style(button_style::Button::Info)
                 .on_press(Message::AudioPressed)
         )
     ).push(
-        Column::new().padding(10).spacing(10)
+        Column::new().padding(5).spacing(10)
             .push(
                 Text::new("请先选择需要最终转换的格式,然后选择文件,\
                 软件会自动开始转换").size(18)

@@ -1,4 +1,4 @@
-// #![windows_subsystem = "windows"]
+#![windows_subsystem = "windows"]
 
 mod style;
 mod app;
@@ -113,6 +113,10 @@ impl Application for MainView {
                     }
                     _ => {}
                 }
+            }
+
+            Message::GoHome => {
+                self.page = String::from("home");
             }
         }
         Command::none()
