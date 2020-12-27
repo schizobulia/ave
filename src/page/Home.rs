@@ -4,7 +4,7 @@ use crate::style::{button_style, pick_list_style, scrollable_style, container_st
 use crate::model::vide_type::VideoContainerType;
 use crate::gstr;
 use crate::app::state::home::HomeState;
-use crate::tool::file_tool::{get_file_list, get_filename};
+use crate::tool::file_tool::{get_filename};
 use std::path::PathBuf;
 use crate::model::receive_msg::ReceiveMsg;
 
@@ -18,6 +18,10 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
     ).style(pick_list_style::PickList);
     Column::new().spacing(20).push(
         Row::new().push(
+            Button::new(&mut home_state.img_page_btn, Text::new("图片处理"))
+                .style(button_style::Button::Primary)
+                .on_press(Message::ImgPressed)
+        ).push(
             Button::new(&mut home_state.audio_page_btn, Text::new("音频处理(目前正在开发中)")).padding(5)
                 .style(button_style::Button::Info)
                 .on_press(Message::AudioPressed)
@@ -55,8 +59,7 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
 }
 
 
-pub fn get_command(select_type: String, t_path: String) -> Vec<Command<Message>> {
-    let file_list = get_file_list(VideoContainerType::default().get_all_type().as_str());
+pub fn get_command(select_type: String, t_path: String, file_list: Vec<PathBuf>) -> Vec<Command<Message>> {
     let mut com_arr: Vec<Command<Message>> = Vec::new();
     for file in file_list {
         let tmp_type = select_type.clone();
