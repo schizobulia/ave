@@ -1,13 +1,9 @@
-use gst::gst_element_error;
-use gst::prelude::*;
+use gstreamer::gst_element_error;
+use gstreamer::prelude::*;
 
 use anyhow::Error;
 use derive_more::{Display, Error};
 
-
-#[derive(Debug, Display, Error)]
-#[display(fmt = "Missing element {}", _0)]
-struct MissingElement(#[error(not(source))] &'static str);
 
 #[derive(Debug, Display, Error)]
 #[display(fmt = "Received error from {}: {} (debug: {:?})", src, error, debug)]
@@ -15,15 +11,14 @@ struct ErrorMessage {
     src: String,
     error: String,
     debug: Option<String>,
-    source: glib::Error,
 }
 
 // This is the callback function called by the demuxer, when a new stream was detected.
 fn handle_demux_pad_added(
-    demuxer: &gst::Element,
-    demux_src_pad: &gst::Pad,
-    queue: &gst::Element,
-    muxer: &gst::Element,
+    demuxer: &gstreamer::Element,
+    demux_src_pad: &gstreamer::Pad,
+    queue: &gstreamer::Element,
+    muxer: &gstreamer::Element,
 ) {
     // Pipe the detected stream through our multiqueue to the muxer.
     // For that, we need to request a sink pad that fits our needs.
@@ -31,7 +26,7 @@ fn handle_demux_pad_added(
         let queue_sink_pad = queue
             .get_request_pad("sink_%u")
             .expect("If this happened, something is terribly wrong");
-        demux_src_pad.link(&queue_sink_pad)?;
+        demux_src_pad.link(&queue_sink_pad).unwrap();
         // Now that we requested a sink pad fitting our needs from the multiqueue,
         // the multiqueue automatically created a fitting src pad on the other side.
         // sink and src pad are linked internally, so we can iterate this internal link chain
@@ -46,7 +41,7 @@ fn handle_demux_pad_added(
         let muxer_sink_pad = muxer
             .get_compatible_pad(&queue_src_pad, None)
             .expect("Aww, you found a format that matroska doesn't support!");
-        queue_src_pad.link(&muxer_sink_pad)?;
+        queue_src_pad.link(&muxer_sink_pad).unwrap();
 
         Ok(())
     };
@@ -54,7 +49,7 @@ fn handle_demux_pad_added(
     if let Err(err) = link_to_muxer() {
         gst_element_error!(
             demuxer,
-            gst::LibraryError::Failed,
+            gstreamer::LibraryError::Failed,
             ("Failed to insert sink"),
             ["{}", err]
         );
@@ -64,18 +59,17 @@ fn handle_demux_pad_added(
 //input_file = "file:///C:/Users/test.mp4";
 //output_file = "/home/test.flv";
 pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error> {
-    gst::init()?;
-    let pipeline = gst::Pipeline::new(None);
-    let src = gst::Element::make_from_uri(gst::URIType::Src, input_file, None)
+    gstreamer::init().unwrap();
+    let pipeline = gstreamer::Pipeline::new(None);
+    let src = gstreamer::Element::make_from_uri(gstreamer::URIType::Src, input_file, None)
         .expect("We do not seem to support this uri");
     let typefinder =
-        gst::ElementFactory::make("typefind", None).map_err(|_| MissingElement("typefind"))?;
+        gstreamer::ElementFactory::make("typefind", None).unwrap();
     let queue =
-        gst::ElementFactory::make("multiqueue", None).map_err(|_| MissingElement("multiqueue"))?;
-    let muxer = gst::ElementFactory::make("matroskamux", None)
-        .map_err(|_| MissingElement("matroskamux"))?;
+        gstreamer::ElementFactory::make("multiqueue", None).unwrap();
+    let muxer = gstreamer::ElementFactory::make("matroskamux", None).unwrap();
     let sink =
-        gst::ElementFactory::make("filesink", None).map_err(|_| MissingElement("filesink"))?;
+        gstreamer::ElementFactory::make("filesink", None).unwrap();
 
     sink.set_property("location", &output_file)
         .expect("setting location property failed");
@@ -94,8 +88,8 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
         .add_many(&[&src, &typefinder, &queue, &muxer, &sink])
         .expect("failed to add elements to pipeline");
 
-    src.link(&typefinder)?;
-    muxer.link(&sink)?;
+    src.link(&typefinder).unwrap();
+    muxer.link(&sink).unwrap();
 
     let pipeline_clone = pipeline.clone();
     let typefinder_clone = typefinder.clone();
@@ -108,7 +102,7 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
             // the decodebin should be used, that does this stuff automatically and handles
             // much more corner-cases. This is just for the sake of being an example.
             let caps = values[2]
-                .get::<gst::Caps>()
+                .get::<gstreamer::Caps>()
                 .expect("typefinder \"have-type\" signal values[2]")
                 .expect("typefinder \"have-type\" signal values[2]: no `caps`");
             let format_name = caps
@@ -118,10 +112,10 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
 
             let demuxer = match format_name {
                 "video/x-matroska" | "video/webm" => {
-                    gst::ElementFactory::make("matroskademux", None).expect("matroskademux missing")
+                    gstreamer::ElementFactory::make("matroskademux", None).expect("matroskademux missing")
                 }
                 "video/quicktime" => {
-                    gst::ElementFactory::make("qtdemux", None).expect("qtdemux missing")
+                    gstreamer::ElementFactory::make("qtdemux", None).expect("qtdemux missing")
                 }
                 _ => {
                     eprintln!("Sorry, this format is not supported by this example.");
@@ -153,19 +147,19 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
         })
         .expect("Failed to register have-type signal of typefind");
 
-    pipeline.set_state(gst::State::Playing)?;
+    pipeline.set_state(gstreamer::State::Playing).unwrap();
 
     let bus = pipeline
         .get_bus()
         .expect("Pipeline without bus. Shouldn't happen!");
 
-    for msg in bus.iter_timed(gst::CLOCK_TIME_NONE) {
-        use gst::MessageView;
+    for msg in bus.iter_timed(gstreamer::CLOCK_TIME_NONE) {
+        use gstreamer::MessageView;
 
         match msg.view() {
             MessageView::Eos(..) => break,
             MessageView::Error(err) => {
-                pipeline.set_state(gst::State::Null)?;
+                pipeline.set_state(gstreamer::State::Null).unwrap();
 
                 return Err(ErrorMessage {
                     src: msg
@@ -174,7 +168,6 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
                         .unwrap_or_else(|| String::from("None")),
                     error: err.get_error().to_string(),
                     debug: err.get_debug(),
-                    source: err.get_error(),
                 }
                     .into());
             }
@@ -191,13 +184,13 @@ pub fn conversion_video(input_file: &str, output_file: &str) -> Result<(), Error
         }
     }
 
-    pipeline.set_state(gst::State::Null)?;
+    pipeline.set_state(gstreamer::State::Null).unwrap();
 
     Ok(())
 }
 
 #[test]
-fn conversion_video_test(){
+fn conversion_video_test() {
     use crate::tool::file_tool::now_dir_path;
     let mut test_path = String::from("file:///");
     let tmp_dir = now_dir_path();
