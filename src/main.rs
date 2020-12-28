@@ -85,7 +85,7 @@ impl Application for MainView {
                             let dir = mkdir(format!("{}\\out\\img\\{}", now_dir_path(), now_time()));
                             self.img_page_state.create_img_path = format!("图片生成目录：{}", dir);
                             let com_arr = page::img::get_command(
-                                dir, file_list);
+                                dir, file_list, self.img_page_state.quality_val as u8);
                             return Command::batch(com_arr);
                         }
                     }
@@ -118,6 +118,8 @@ impl Application for MainView {
             Message::GoHome => {
                 self.page = String::from("home");
             }
+
+            Message::ImgQualityChanged(q) => self.img_page_state.quality_val = q,
         }
         Command::none()
     }

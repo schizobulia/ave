@@ -12,6 +12,7 @@ pub enum Message {
     ReceiveMsg(ReceiveMsg),
     //切换图片处理页面
     ImgPressed,
+    ImgQualityChanged(f32),
     //返回上一页
     GoHome,
 }

@@ -1,4 +1,4 @@
-use iced::{{Column, Text}, Row, Align, Button, Container, Scrollable, Length, Command, Image};
+use iced::{{Column, Text}, Row, Align, Button, Container, Scrollable, Length, Command, Image, Slider};
 use crate::app::app_message::Message;
 use crate::style::{button_style, scrollable_style, container_style};
 use crate::app::state::img::ImgState;
@@ -19,6 +19,17 @@ pub fn render(img_state: &mut ImgState) -> Column<Message> {
     ).push(
         Column::new().padding(5).spacing(10).push(
             Text::new("请先选择图片,软件会自动开始压缩").size(18)
+        ).push(
+            Row::new().padding(5).align_items(Align::Center).push(
+                Text::new("压缩质量").size(15)
+            ).push(
+                Slider::new(
+                    &mut img_state.quality_progress,
+                    10.0..=90.0,
+                    img_state.quality_val,
+                    Message::ImgQualityChanged,
+                ).step(1.00)
+            )
         ).push(
             Row::new().spacing(10).align_items(Align::Center)
                 .push(
@@ -43,11 +54,11 @@ pub fn render(img_state: &mut ImgState) -> Column<Message> {
 }
 
 
-pub fn get_command(t_path: String, file_list: Vec<PathBuf>) -> Vec<Command<Message>> {
+pub fn get_command(t_path: String, file_list: Vec<PathBuf>, quality: u8) -> Vec<Command<Message>> {
     let mut com_arr: Vec<Command<Message>> = Vec::new();
     for file in file_list {
         com_arr.push(Command::perform(compress_img(
-            file, t_path.clone(),
+            file, t_path.clone(), quality,
         ), Message::ReceiveMsg));
     }
     com_arr
@@ -55,14 +66,14 @@ pub fn get_command(t_path: String, file_list: Vec<PathBuf>) -> Vec<Command<Messa
 
 
 //压缩图片
-async fn compress_img(file: PathBuf, t_path: String) -> ReceiveMsg {
+async fn compress_img(file: PathBuf, t_path: String, quality: u8) -> ReceiveMsg {
     let filename: String = file.to_string_lossy().to_string();
     let old_file_name = &get_filename(filename.clone());
     let tmp_type = "jpeg";
     let result = conversion_img(
         format!("{}", file.to_string_lossy()),
         format!("{}//{}.{}", t_path, old_file_name, tmp_type),
-        10,
+        quality,
     );
 
     let res: ReceiveMsg;
