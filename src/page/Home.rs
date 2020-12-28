@@ -62,25 +62,27 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
 
 pub fn get_command(select_type: String, t_path: String, file_list: Vec<PathBuf>) -> Vec<Command<Message>> {
     let mut com_arr: Vec<Command<Message>> = Vec::new();
+    let mut index = 1;
     for file in file_list {
         let tmp_type = select_type.clone();
         com_arr.push(Command::perform(formatting_video(
-            tmp_type.to_string(), file, t_path.clone()), Message::ReceiveMsg));
+            tmp_type.to_string(), file, t_path.clone(), index), Message::ReceiveMsg));
+        index += 1;
     }
     com_arr
 }
 
 //转换视频格式
-async fn formatting_video(tmp_type: String, file: PathBuf, t_path: String) -> ReceiveMsg {
+async fn formatting_video(tmp_type: String, file: PathBuf, t_path: String, index: i32) -> ReceiveMsg {
     let filename: String = file.to_string_lossy().to_string();
     let old_file_name = &get_filename(filename.clone());
     let result = gstr::conversion::conversion_video(
         format!("file:///{}", file.to_string_lossy()).as_str(),
-        format!("{}//{}.{}", t_path, old_file_name, tmp_type).as_str(),
+        format!("{}//{}-{}.{}", t_path, old_file_name, index, tmp_type).as_str(),
     );
     let res: ReceiveMsg;
     if result.is_ok() {
-        res = ReceiveMsg::new(filename.clone(), String::from("转换成功"));
+        res = ReceiveMsg::new(filename, String::from("转换成功"));
     } else {
         res = ReceiveMsg::new(filename, String::from("转换失败"));
     }

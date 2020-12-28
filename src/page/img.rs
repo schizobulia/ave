@@ -56,23 +56,25 @@ pub fn render(img_state: &mut ImgState) -> Column<Message> {
 
 pub fn get_command(t_path: String, file_list: Vec<PathBuf>, quality: u8) -> Vec<Command<Message>> {
     let mut com_arr: Vec<Command<Message>> = Vec::new();
+    let mut index = 1;
     for file in file_list {
         com_arr.push(Command::perform(compress_img(
-            file, t_path.clone(), quality,
+            file, t_path.clone(), quality, index,
         ), Message::ReceiveMsg));
+        index += 1;
     }
     com_arr
 }
 
 
 //压缩图片
-async fn compress_img(file: PathBuf, t_path: String, quality: u8) -> ReceiveMsg {
+async fn compress_img(file: PathBuf, t_path: String, quality: u8, index: i32) -> ReceiveMsg {
     let filename: String = file.to_string_lossy().to_string();
     let old_file_name = &get_filename(filename.clone());
     let tmp_type = "jpeg";
     let result = conversion_img(
         format!("{}", file.to_string_lossy()),
-        format!("{}//{}.{}", t_path, old_file_name, tmp_type),
+        format!("{}//{}-{}.{}", t_path, old_file_name, index, tmp_type),
         quality,
     );
 

@@ -1,4 +1,4 @@
-#![windows_subsystem = "windows"]
+// #![windows_subsystem = "windows"]
 
 mod style;
 mod app;
@@ -63,9 +63,7 @@ impl Application for MainView {
             Message::AudioPressed => {
                 // self.page = String::from("audio");
             }
-            Message::ImgPressed => {
-                self.page = String::from("img");
-            }
+
             Message::FileSelected => {
                 match self.page.as_str() {
                     "home" => {
@@ -93,10 +91,6 @@ impl Application for MainView {
                 }
             }
 
-            Message::LanguageSelected(vide_type) => {
-                self.home_page_state.select_video_type = vide_type;
-            }
-
             Message::ReceiveMsg(msg) => {
                 match self.page.as_str() {
                     "home" => {
@@ -115,10 +109,9 @@ impl Application for MainView {
                 }
             }
 
-            Message::GoHome => {
-                self.page = String::from("home");
-            }
-
+            Message::ImgPressed => self.page = String::from("img"),
+            Message::LanguageSelected(vide_type) => self.home_page_state.select_video_type = vide_type,
+            Message::GoHome => self.page = String::from("home"),
             Message::ImgQualityChanged(q) => self.img_page_state.quality_val = q,
         }
         Command::none()
