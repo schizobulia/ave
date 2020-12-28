@@ -196,7 +196,6 @@ fn conversion_video_test() {
     let tmp_dir = now_dir_path();
     test_path.push_str(tmp_dir.as_str());
     test_path.push_str("/test/input.mp4");
-    println!("{}", test_path);
-    let result = conversion_video(test_path.as_str(), format!("{}{}", tmp_dir, "/test/output.mp4").as_str());
+    let result = conversion_video(test_path.as_str(), format!("{}{}", tmp_dir, "/out/output.mp4").as_str());
     assert_eq!(result.is_ok(), true);
 }

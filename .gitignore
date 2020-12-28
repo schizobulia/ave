@@ -5,5 +5,3 @@ pkg/
 Cargo.lock
 .cargo/
 /out
-
-/test/output.mp4

@@ -3,7 +3,7 @@ use crate::app::app_message::Message;
 use crate::style::{button_style, scrollable_style, container_style};
 use crate::app::state::img::ImgState;
 use crate::tool::file_tool::{get_filename};
-use crate::tool::img_tool::conversion_img;
+use crate::tool::img_tool::{compression_img};
 use std::path::PathBuf;
 use crate::model::receive_msg::ReceiveMsg;
 
@@ -72,7 +72,7 @@ async fn compress_img(file: PathBuf, t_path: String, quality: u8, index: i32) ->
     let filename: String = file.to_string_lossy().to_string();
     let old_file_name = &get_filename(filename.clone());
     let tmp_type = "jpeg";
-    let result = conversion_img(
+    let result = compression_img(
         format!("{}", file.to_string_lossy()),
         format!("{}//{}-{}.{}", t_path, old_file_name, index, tmp_type),
         quality,
