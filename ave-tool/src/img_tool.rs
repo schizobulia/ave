@@ -10,11 +10,13 @@ pub fn compression_img(input_file: String, output_file: String, quality: u8) -> 
 
 #[test]
 fn compression_img_test() {
-    use crate::tool::file_tool::now_dir_path;
+    use crate::file_tool::now_dir_path;
+    use crate::file_tool::mkdir;
     let tmp_dir = now_dir_path();
     let mut test_path = String::from(tmp_dir.as_str());
     test_path.push_str("/test/input.png");
+    let out_path = mkdir(format!("{}{}", tmp_dir, "/out"));
     let result = compression_img(test_path,
-                                 format!("{}{}", tmp_dir, "/out/output.jpeg"), 75);
+                                 format!("{}{}", out_path, "/output.jpeg"), 75);
     assert_eq!(result, true);
 }
