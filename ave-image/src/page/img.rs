@@ -1,22 +1,15 @@
-use iced::{{Column, Text}, Row, Align, Button, Container, Scrollable, Length, Command, Image, Slider};
+use iced::{{Column, Text}, Row, Align, Button, Container, Scrollable, Length, Command, Slider};
 use crate::app::app_message::Message;
-use crate::style::{button_style, scrollable_style, container_style};
+use iced_style::{button_style, scrollable_style, container_style};
 use crate::app::state::img::ImgState;
-use crate::tool::file_tool::{get_filename};
-use crate::tool::img_tool::{compression_img};
+use ave_tool::file_tool::get_filename;
+use ave_tool::img_tool::compression_img;
 use std::path::PathBuf;
 use crate::model::receive_msg::ReceiveMsg;
 
 
 pub fn render(img_state: &mut ImgState) -> Column<Message> {
-    let home_img = Image::new("resources/home.png");
     Column::new().spacing(15).push(
-        Row::new().padding(5).spacing(10)
-            .push(
-                Button::new(&mut img_state.break_btn, home_img.width(Length::Units(20)).height(Length::Units(20)))
-                    .on_press(Message::GoHome).style(button_style::Button::Light)
-            )
-    ).push(
         Column::new().padding(5).spacing(10).push(
             Text::new("请先选择图片,软件会自动开始压缩").size(18)
         ).push(

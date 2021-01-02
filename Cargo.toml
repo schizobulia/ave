@@ -1,16 +1,6 @@
-[package]
-name = "ave"
-version = "0.1.0"
-authors = ["schizobulia <2833324528@qq.com>"]
-edition = "2018"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-gstreamer = { version = "0.16.5", features= ["v1_10"] }
-anyhow = "1.0"
-derive_more = "0.99.5"
-iced = { version = "0.2.0", features = ["image"] }
-nfd2 = "0.2.3"
-chrono = "0.4.19"
-image = "0.23.12"
+members = [
+    "ave-video",
+    "ave-image",
+]

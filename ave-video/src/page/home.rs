@@ -1,10 +1,10 @@
 use iced::{Align, Command, Container, Length, PickList, Column, Row, Button, Text, Scrollable};
 use crate::app::app_message::Message;
-use crate::style::{button_style, pick_list_style, scrollable_style, container_style};
+use iced_style::{button_style, pick_list_style, scrollable_style, container_style};
 use crate::model::vide_type::VideoContainerType;
 use crate::gstr;
 use crate::app::state::home::HomeState;
-use crate::tool::file_tool::{get_filename};
+use ave_tool::file_tool::get_filename;
 use std::path::PathBuf;
 use crate::model::receive_msg::ReceiveMsg;
 
@@ -17,17 +17,6 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
         Message::LanguageSelected,
     ).style(pick_list_style::PickList);
     Column::new().spacing(15).push(
-        Row::new().padding(5).spacing(10)
-            .push(
-                Button::new(&mut home_state.img_page_btn, Text::new("图片处理"))
-                    .style(button_style::Button::Primary)
-                    .on_press(Message::ImgPressed)
-            ).push(
-            Button::new(&mut home_state.audio_page_btn, Text::new("音频处理(目前正在开发中)")).padding(5)
-                .style(button_style::Button::Info)
-                .on_press(Message::AudioPressed)
-        )
-    ).push(
         Column::new().padding(5).spacing(10)
             .push(
                 Text::new("请先选择需要最终转换的格式,然后选择文件,\
