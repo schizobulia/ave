@@ -23,10 +23,12 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
                 软件会自动开始转换").size(18)
             )
             .push(
+                Row::new().padding(3).align_items(Align::Center)
+                    .push(Text::new("生成格式：").size(15))
+                    .push(pick_list)
+            )
+            .push(
                 Row::new().spacing(10).align_items(Align::Center)
-                    .push(
-                        pick_list
-                    )
                     .push(
                         Button::new(&mut home_state.file_home_btn, Text::new("选择文件")).padding(5)
                             .style(button_style::Button::Primary)

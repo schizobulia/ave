@@ -1,20 +1,28 @@
-use iced::{{Column, Text}, Row, Align, Button, Container, Scrollable, Length, Command, Slider};
+use iced::{{Column, Text}, Row, Align, Button, Container, Scrollable, Length, Command, Slider, PickList};
 use crate::app::app_message::Message;
-use iced_style::{button_style, scrollable_style, container_style};
+use iced_style::{button_style, scrollable_style, container_style, pick_list_style};
 use crate::app::state::img::ImgState;
 use ave_tool::file_tool::get_filename;
 use ave_tool::img_tool::compression_img;
 use std::path::PathBuf;
 use crate::model::receive_msg::ReceiveMsg;
+use crate::model::image_type::ImageType;
 
 
 pub fn render(img_state: &mut ImgState) -> Column<Message> {
+    let pick_list = PickList::new(
+        &mut img_state.pick_list,
+        &ImageType::ALL[..],
+        Some(img_state.select_img_type),
+        Message::ImgTypeSelected,
+    ).style(pick_list_style::PickList);
+
     Column::new().spacing(15).push(
         Column::new().padding(5).spacing(10).push(
-            Text::new("请先选择图片,软件会自动开始压缩").size(18)
+            Text::new("请先选择需要最终转换的格式,软件会自动开始压缩").size(18)
         ).push(
-            Row::new().padding(5).align_items(Align::Center).push(
-                Text::new("压缩质量").size(15)
+            Row::new().padding(3).align_items(Align::Center).push(
+                Text::new("压缩质量：").size(15)
             ).push(
                 Slider::new(
                     &mut img_state.quality_progress,
@@ -24,7 +32,11 @@ pub fn render(img_state: &mut ImgState) -> Column<Message> {
                 ).step(1.00)
             )
         ).push(
-            Row::new().spacing(10).align_items(Align::Center)
+            Row::new().padding(3).align_items(Align::Center)
+                .push(Text::new("生成格式：").size(15))
+                .push(pick_list)
+        ).push(
+            Row::new().padding(3).align_items(Align::Center)
                 .push(
                     Button::new(&mut img_state.file_img_btn, Text::new("选择文件")).padding(5)
                         .style(button_style::Button::Primary)
@@ -47,12 +59,12 @@ pub fn render(img_state: &mut ImgState) -> Column<Message> {
 }
 
 
-pub fn get_command(t_path: String, file_list: Vec<PathBuf>, quality: u8) -> Vec<Command<Message>> {
+pub fn get_command(t_path: String, file_list: Vec<PathBuf>, quality: u8, img_type: String) -> Vec<Command<Message>> {
     let mut com_arr: Vec<Command<Message>> = Vec::new();
     let mut index = 1;
     for file in file_list {
         com_arr.push(Command::perform(compress_img(
-            file, t_path.clone(), quality, index,
+            file, t_path.clone(), quality, index, img_type.clone(),
         ), Message::ReceiveMsg));
         index += 1;
     }
@@ -61,13 +73,12 @@ pub fn get_command(t_path: String, file_list: Vec<PathBuf>, quality: u8) -> Vec<
 
 
 //压缩图片
-async fn compress_img(file: PathBuf, t_path: String, quality: u8, index: i32) -> ReceiveMsg {
+async fn compress_img(file: PathBuf, t_path: String, quality: u8, index: i32, img_type: String) -> ReceiveMsg {
     let filename: String = file.to_string_lossy().to_string();
     let old_file_name = &get_filename(filename.clone());
-    let tmp_type = "jpeg";
     let result = compression_img(
         format!("{}", file.to_string_lossy()),
-        format!("{}//{}-{}.{}", t_path, old_file_name, index, tmp_type),
+        format!("{}//{}-{}.{}", t_path, old_file_name, index, img_type),
         quality,
     );
 

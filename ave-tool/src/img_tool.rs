@@ -8,6 +8,7 @@ pub fn compression_img(input_file: String, output_file: String, quality: u8) -> 
     result.is_ok()
 }
 
+
 #[test]
 fn compression_img_test() {
     use crate::file_tool::now_dir_path;

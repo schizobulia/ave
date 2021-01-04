@@ -11,13 +11,11 @@ pub enum ImageType {
     Dds,
     Bmp,
     Ico,
-    Hdr,
     Farbfeld,
-    Avif,
 }
 
 impl ImageType {
-    pub(crate) const ALL: [ImageType; 14] = [
+    pub(crate) const ALL: [ImageType; 12] = [
         ImageType::Png,
         ImageType::Jpg,
         ImageType::Jpeg,
@@ -29,9 +27,7 @@ impl ImageType {
         ImageType::Dds,
         ImageType::Bmp,
         ImageType::Ico,
-        ImageType::Hdr,
         ImageType::Farbfeld,
-        ImageType::Avif,
     ];
 
     //获取所有类型
@@ -69,9 +65,7 @@ impl std::fmt::Display for ImageType {
                 ImageType::Dds => "dds",
                 ImageType::Bmp => "bmp",
                 ImageType::Ico => "ico",
-                ImageType::Hdr => "hdr",
                 ImageType::Farbfeld => "farbfeld",
-                ImageType::Avif => "avif",
             }
         )
     }

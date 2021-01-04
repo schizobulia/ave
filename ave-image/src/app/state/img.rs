@@ -1,4 +1,5 @@
-use iced::{button, scrollable, slider};
+use iced::{button, scrollable, slider, pick_list};
+use crate::model::image_type::ImageType;
 
 //首页状态
 pub struct ImgState {
@@ -10,6 +11,8 @@ pub struct ImgState {
     pub msg_conversion_statue: String,
     pub quality_progress: slider::State,
     pub quality_val: f32,
+    pub pick_list: pick_list::State<ImageType>,
+    pub select_img_type: ImageType,
 }
 
 impl Default for ImgState {
@@ -23,6 +26,8 @@ impl Default for ImgState {
             msg_conversion_statue: String::from("控制台...\r\n"),
             quality_progress: slider::State::default(),
             quality_val: 75.0,
+            pick_list: pick_list::State::default(),
+            select_img_type: ImageType::Jpeg
         }
     }
 }

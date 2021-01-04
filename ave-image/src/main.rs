@@ -61,7 +61,7 @@ impl Application for MainView {
                             let dir = mkdir(format!("{}\\out\\img\\{}", now_dir_path(), now_time()));
                             self.img_page_state.create_img_path = format!("图片生成目录：{}", dir);
                             let com_arr = page::img::get_command(
-                                dir, file_list, self.img_page_state.quality_val as u8);
+                                dir, file_list, self.img_page_state.quality_val as u8, self.img_page_state.select_img_type.to_string());
                             return Command::batch(com_arr);
                         }
                     }
@@ -81,6 +81,7 @@ impl Application for MainView {
                 }
             }
 
+            Message::ImgTypeSelected(img_type) => self.img_page_state.select_img_type = img_type,
             Message::ImgQualityChanged(q) => self.img_page_state.quality_val = q,
         }
         Command::none()
