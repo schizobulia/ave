@@ -68,7 +68,7 @@ async fn formatting_video(tmp_type: String, file: PathBuf, t_path: String, index
     let filename: String = file.to_string_lossy().to_string();
     let old_file_name = &get_filename(filename.clone());
     let result = gstr::conversion::conversion_video(
-        format!("file:///{}", file.to_string_lossy()).as_str(),
+        format!("{}", file.to_string_lossy()).as_str(),
         format!("{}//{}-{}.{}", t_path, old_file_name, index, tmp_type).as_str(),
     );
     let res: ReceiveMsg;
