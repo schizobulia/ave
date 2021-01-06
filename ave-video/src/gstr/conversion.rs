@@ -1,4 +1,4 @@
-use std::process::{Command,Stdio};
+use std::process::{Command, Stdio};
 use std::os::windows::process::CommandExt;
 use core::fmt::Error;
 use ave_tool::file_tool::now_dir_path;

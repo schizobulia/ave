@@ -1,4 +1,4 @@
-#![windows_subsystem = "windows"]
+// #![windows_subsystem = "windows"]
 
 mod app;
 mod page;
@@ -62,8 +62,8 @@ impl Application for MainView {
                             let dir = mkdir(format!("{}\\out\\video\\{}", now_dir_path(), now_time()));
                             self.home_page_state.create_video_path = format!("视频生成目录：{}", dir);
                             let com_arr = page::home::get_command(
-                                self.home_page_state.select_video_type.to_string(),
-                                dir, file_list, self.home_page_state.quality_val);
+                                &mut self.home_page_state,
+                                dir, file_list);
                             return Command::batch(com_arr);
                         }
                     }

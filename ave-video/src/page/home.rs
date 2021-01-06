@@ -63,14 +63,20 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
 }
 
 
-pub fn get_command(select_type: String, t_path: String, file_list: Vec<PathBuf>, quality_val: f32) -> Vec<Command<Message>> {
+pub fn get_command(home_state: &mut HomeState, t_path: String, file_list: Vec<PathBuf>) -> Vec<Command<Message>> {
+    let select_type = home_state.select_video_type;
+    let quality_val = home_state.quality_val;
     let mut com_arr: Vec<Command<Message>> = Vec::new();
     let mut index = 1;
     for file in file_list {
         let tmp_type = select_type.clone();
         com_arr.push(Command::perform(formatting_video(
-            tmp_type.to_string(), file, t_path.clone(), index, quality_val), Message::ReceiveMsg));
+            tmp_type.to_string(), file.clone(), t_path.clone(), index, quality_val), Message::ReceiveMsg));
         index += 1;
+
+        let old_msg = &home_state.msg_conversion_statue;
+        home_state.msg_conversion_statue = format!("{}{}   加入队列...\r\n\
+                    ", old_msg, file.file_name().unwrap().to_string_lossy());
     }
     com_arr
 }
@@ -82,7 +88,7 @@ async fn formatting_video(tmp_type: String, file: PathBuf, t_path: String, index
     let result = gstr::conversion::conversion_video(
         file.to_string_lossy().to_string().as_str(),
         format!("{}//{}-{}.{}", t_path, old_file_name, index, tmp_type).as_str(),
-        quality_val as i32
+        quality_val as i32,
     );
     let res: ReceiveMsg;
     if result.is_ok() {
