@@ -1,11 +1,13 @@
-use std::process::Command;
+use std::process::{Command,Stdio};
+use std::os::windows::process::CommandExt;
 use core::fmt::Error;
 use ave_tool::file_tool::now_dir_path;
 
 //需要在resource中下载ffmpeg.exe文件
 pub fn conversion_video(input_file: &str, output_file: &str, quality_val: i32) -> Result<(), Error> {
     let com_mount = format!("{}/resource/ffmpeg.exe -i {} -b {}k {}", now_dir_path(), input_file, quality_val, output_file);
-    Command::new("cmd").arg("/c").arg(com_mount).spawn().expect("sh exec error!");
+    Command::new("cmd").creation_flags(0x08000000).arg("/c").arg(com_mount)
+        .stdout(Stdio::piped()).output().expect("cmd exec error!");
     Ok(())
 }
 

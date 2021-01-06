@@ -27,7 +27,7 @@ impl Default for HomeState {
             create_video_path: String::default(),
             scroll_comd_state: scrollable::State::new(),
             msg_conversion_statue: String::from("控制台...\r\n"),
-            quality_val: 500.0,
+            quality_val: 200.0,
             quality_progress: slider::State::default(),
         }
     }

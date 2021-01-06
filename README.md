@@ -11,6 +11,8 @@
     + [iced-style](./iced-style)：自定义iced样式库
 
 - ### 打包好的exe
+    + 视频处理(推荐)：http://demo.51jcjgzy.cn/ave/ave-video-ffmpeg-dev.zip
+
     + 视频处理：http://demo.51jcjgzy.cn/ave/ave-video-dev.zip
 
     + 图片处理：http://demo.51jcjgzy.cn/ave/ave-image-dev.exe
