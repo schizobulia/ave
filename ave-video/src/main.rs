@@ -1,4 +1,4 @@
-// #![windows_subsystem = "windows"]
+#![windows_subsystem = "windows"]
 
 mod app;
 mod page;
@@ -63,7 +63,7 @@ impl Application for MainView {
                             self.home_page_state.create_video_path = format!("视频生成目录：{}", dir);
                             let com_arr = page::home::get_command(
                                 self.home_page_state.select_video_type.to_string(),
-                                dir, file_list);
+                                dir, file_list, self.home_page_state.quality_val);
                             return Command::batch(com_arr);
                         }
                     }
@@ -82,7 +82,7 @@ impl Application for MainView {
                     _ => {}
                 }
             }
-
+            Message::VideoQualityChanged(val) => self.home_page_state.quality_val = val,
             Message::LanguageSelected(vide_type) => self.home_page_state.select_video_type = vide_type,
         }
         Command::none()

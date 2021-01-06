@@ -8,4 +8,5 @@ pub enum Message {
     LanguageSelected(vide_type::VideoContainerType),
     //接收并处理控制台消息
     ReceiveMsg(ReceiveMsg),
+    VideoQualityChanged(f32),
 }

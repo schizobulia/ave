@@ -5,3 +5,4 @@ pkg/
 Cargo.lock
 .cargo/
 /out
+/resource/ffmpeg.exe

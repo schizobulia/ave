@@ -1,4 +1,4 @@
-use iced::{button, pick_list, scrollable};
+use iced::{button, pick_list, scrollable, slider};
 use crate::model::vide_type::VideoContainerType;
 
 //首页状态
@@ -11,6 +11,8 @@ pub struct HomeState {
     pub create_video_path: String,
     pub scroll_comd_state: scrollable::State,
     pub msg_conversion_statue: String,
+    pub quality_progress: slider::State,
+    pub quality_val: f32, //视频压缩比例
 }
 
 
@@ -25,6 +27,8 @@ impl Default for HomeState {
             create_video_path: String::default(),
             scroll_comd_state: scrollable::State::new(),
             msg_conversion_statue: String::from("控制台...\r\n"),
+            quality_val: 500.0,
+            quality_progress: slider::State::default(),
         }
     }
 }
