@@ -4,7 +4,7 @@ use iced_style::{button_style, pick_list_style, scrollable_style, container_styl
 use crate::model::vide_type::VideoContainerType;
 use crate::gstr;
 use crate::app::state::home::HomeState;
-use ave_tool::file_tool::get_filename;
+use ave_tool::file_tool::{get_filename, mkdir};
 use std::path::PathBuf;
 use crate::model::receive_msg::ReceiveMsg;
 
@@ -70,25 +70,28 @@ pub fn get_command(home_state: &mut HomeState, t_path: String, file_list: Vec<Pa
     let mut index = 1;
     for file in file_list {
         let tmp_type = select_type.clone();
+        let filename = file.file_name().unwrap().to_string_lossy();
+        let create_path = get_create_path(t_path.clone(), home_state.select_video_type, filename.to_string());
         com_arr.push(Command::perform(formatting_video(
-            tmp_type.to_string(), file.clone(), t_path.clone(), index, quality_val), Message::ReceiveMsg));
+            tmp_type, file.clone(), create_path, index, quality_val), Message::ReceiveMsg));
         index += 1;
 
         let old_msg = &home_state.msg_conversion_statue;
-        home_state.msg_conversion_statue = format!("{}{}   加入队列...\r\n\
-                    ", old_msg, file.file_name().unwrap().to_string_lossy());
+        home_state.msg_conversion_statue = format!("{}{}   转换中...\r\n\
+                    ", old_msg, filename);
     }
     com_arr
 }
 
 //转换视频格式
-async fn formatting_video(tmp_type: String, file: PathBuf, t_path: String, index: i32, quality_val: f32) -> ReceiveMsg {
+async fn formatting_video(tmp_type: VideoContainerType, file: PathBuf, t_path: String, index: i32, quality_val: f32) -> ReceiveMsg {
     let filename: String = file.to_string_lossy().to_string();
     let old_file_name = &get_filename(filename.clone());
     let result = gstr::conversion::conversion_video(
         file.to_string_lossy().to_string().as_str(),
-        format!("{}//{}-{}.{}", t_path, old_file_name, index, tmp_type).as_str(),
+        format!("{}//{}-{}.{}", t_path, old_file_name, index, tmp_type.to_string()).as_str(),
         quality_val as i32,
+        tmp_type,
     );
     let res: ReceiveMsg;
     if result.is_ok() {
@@ -97,4 +100,21 @@ async fn formatting_video(tmp_type: String, file: PathBuf, t_path: String, index
         res = ReceiveMsg::new(filename, String::from("转换失败"));
     }
     res
+}
+
+
+//对特殊视频格式做处理
+//生成m3u8视频时  单独给每个视频创建文件夹
+fn get_create_path(t_path: String, video_type: VideoContainerType, filename: String) -> String {
+    match video_type {
+        VideoContainerType::M3u8 => {
+            let mut m3u8_dir = t_path.clone();
+            m3u8_dir.push_str("/");
+            m3u8_dir.push_str(filename.as_str());
+            mkdir(m3u8_dir)
+        }
+        _ => {
+            t_path
+        }
+    }
 }

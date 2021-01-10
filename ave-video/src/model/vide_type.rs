@@ -2,6 +2,7 @@
 pub enum VideoContainerType {
     Mp4,
     Flv,
+    M3u8,
     F4v,
     Webm,
     M4v,
@@ -31,10 +32,11 @@ pub enum VideoContainerType {
 }
 
 impl VideoContainerType {
-    pub(crate) const ALL: [VideoContainerType; 28] = [
+    pub(crate) const ALL: [VideoContainerType; 29] = [
         VideoContainerType::Mp4,
         VideoContainerType::Flv,
         VideoContainerType::F4v,
+        VideoContainerType::M3u8,
         VideoContainerType::Webm,
         VideoContainerType::M4v,
         VideoContainerType::Mov,
@@ -63,7 +65,7 @@ impl VideoContainerType {
     ];
 
     //获取所有类型
-    pub(crate) fn get_all_type(&self) -> String{
+    pub(crate) fn get_all_type(&self) -> String {
         let all_data = Self::ALL;
         let mut result = String::new();
         for all_datum in all_data.iter() {
@@ -88,6 +90,7 @@ impl std::fmt::Display for VideoContainerType {
             match self {
                 VideoContainerType::Mp4 => "mp4",
                 VideoContainerType::Flv => "flv",
+                VideoContainerType::M3u8 => "m3u8",
                 VideoContainerType::F4v => "f4v",
                 VideoContainerType::Webm => "webm",
                 VideoContainerType::M4v => "m4v",

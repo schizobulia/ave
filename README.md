@@ -20,4 +20,4 @@
 
 - ### 开发进度
     + 如果有兴趣参与,可以先查看[开发进度](https://github.com/schizobulia/ave/projects/1)。
-    + 添加新功能,请先Pr到dev分支
+    + 添加新功能,请先Pr到对应的分支
