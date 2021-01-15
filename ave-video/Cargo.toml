@@ -7,6 +7,9 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-iced = { version = "0.2.0", features = ["image"] }
-ave-tool = { path = "../ave-tool" }
+iced = { version = "0.2.0" }
+ave-tool = { path = "../ave-tool", features = ["datetime"] }
 iced-style = { path = "../iced-style" }
+
+[features]
+default = []

@@ -5,6 +5,6 @@
  * @LastEditors: wj
  * @Description: 
  */
-pub mod datetime;
+#[cfg(feature = "chrono")] pub mod datetime;
 pub mod file_tool;
-pub mod img_tool;
+#[cfg(feature = "image")] pub mod img_tool;
