@@ -1,11 +1,24 @@
-use image::{ImageOutputFormat};
-use std::fs;
+use image::{ImageOutputFormat, DynamicImage, imageops};
+use std::fs::File;
+
+pub fn get_dynamic_image(file_path: String) -> DynamicImage {
+    image::open(file_path).unwrap()
+}
+
+//设置图片大小
+pub fn set_dynamic_image_resize(dynamic_image: DynamicImage, width: u32, height: u32) -> DynamicImage {
+    dynamic_image.resize_exact(width, height, imageops::FilterType::Nearest)
+}
+
+//设置最终生成的图片质量
+pub fn quality_img(dynamic_image: DynamicImage, mut file: File, quality: u8) -> bool {
+    dynamic_image.write_to(&mut file, ImageOutputFormat::Jpeg(quality)).is_ok()
+}
 
 pub fn compression_img(input_file: String, output_file: String, quality: u8) -> bool {
-    let dynamic_image = image::open(input_file).unwrap();
-    let mut file = fs::File::create(output_file).unwrap();
-    let result = dynamic_image.write_to(&mut file, ImageOutputFormat::Jpeg(quality));
-    result.is_ok()
+    let dynamic_image = get_dynamic_image(input_file);
+    let file = File::create(output_file).unwrap();
+    quality_img(dynamic_image, file, quality)
 }
 
 
