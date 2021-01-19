@@ -27,8 +27,10 @@
     + 图片处理：http://demo.51jcjgzy.cn/ave/ave-image-dev.exe
         - [x] 格式转换
         - [x] 压缩控制
+        - [x] 宽高控制
 
 - ### 开发进度
     + 如果有兴趣参与,可以先查看[开发进度](https://github.com/schizobulia/ave/projects/1)。
     + [需要解决的问题](https://github.com/schizobulia/ave/projects/1#column-12468586)
     + 添加新功能,请先Pr到对应的分支
+    + 如果github clone太慢,可以使用码云clone之后修改remote：https://gitee.com/schizobuliawj/ave
