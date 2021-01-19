@@ -1,4 +1,4 @@
-#![windows_subsystem = "windows"]
+// #![windows_subsystem = "windows"]
 
 mod app;
 mod page;
@@ -61,7 +61,7 @@ impl Application for MainView {
                             let dir = mkdir(format!("{}\\out\\img\\{}", now_dir_path(), now_time()));
                             self.img_page_state.create_img_path = format!("图片生成目录：{}", dir);
                             let com_arr = page::img::get_command(
-                                dir, file_list, self.img_page_state.quality_val as u8, self.img_page_state.select_img_type.to_string());
+                                dir, file_list, &mut self.img_page_state);
                             return Command::batch(com_arr);
                         }
                     }
@@ -83,6 +83,26 @@ impl Application for MainView {
 
             Message::ImgTypeSelected(img_type) => self.img_page_state.select_img_type = img_type,
             Message::ImgQualityChanged(q) => self.img_page_state.quality_val = q,
+            Message::ResizeWidthChange(width) => {
+                match width.parse::<u32>() {
+                    Ok(s) => {
+                        self.img_page_state.resize_width = s.to_string();
+                    }
+                    Err(_) => {
+                        self.img_page_state.resize_width = String::from("");
+                    }
+                }
+            }
+            Message::ResizeHeightChange(height) => {
+                match height.parse::<u32>() {
+                    Ok(s) => {
+                        self.img_page_state.resize_height = s.to_string();
+                    }
+                    Err(_) => {
+                        self.img_page_state.resize_height = String::from("");
+                    }
+                }
+            }
         }
         Command::none()
     }

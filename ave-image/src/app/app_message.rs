@@ -8,4 +8,7 @@ pub enum Message {
     ReceiveMsg(ReceiveMsg),
     ImgQualityChanged(f32),
     ImgTypeSelected(ImageType),
+
+    ResizeWidthChange(String),
+    ResizeHeightChange(String),
 }
