@@ -19,7 +19,11 @@ impl text_input::StyleSheet for TextInput {
 
     fn focused(&self) -> text_input::Style {
         text_input::Style {
-            ..self.active()
+            border_color: Color {
+                a: 0.6,
+                ..Color::from_rgb8(184, 218, 255)
+            },
+            ..Self.active()
         }
     }
 
