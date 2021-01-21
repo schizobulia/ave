@@ -1,6 +1,6 @@
-use iced::{{Column, Text}, Row, Align, Button, Container, Scrollable, Length, Command, Slider, PickList, TextInput};
+use iced::{{Column, Text}, Row, Align, Button, Container, Scrollable, Length, Command, Slider, PickList, TextInput, HorizontalAlignment, VerticalAlignment};
 use crate::app::app_message::Message;
-use iced_style::{button_style, scrollable_style, container_style, pick_list_style};
+use iced_style::{button_style, scrollable_style, container_style, pick_list_style, input_style};
 use crate::app::state::img::ImgState;
 use ave_tool::file_tool::get_filename;
 use ave_tool::img_tool::{get_dynamic_image, set_dynamic_image_resize, quality_img};
@@ -40,11 +40,13 @@ pub fn render(img_state: &mut ImgState) -> Column<Message> {
             Row::new().padding(3).align_items(Align::Center)
                 .push(Text::new("图片大小：").size(15))
                 .push(TextInput::new(&mut img_state.resize_width_state, "宽度",
-                                     img_state.resize_width.as_str(), Message::ResizeWidthChange)
-                    .width(Length::Units(100)))
+                                     img_state.resize_width.as_str(), Message::ResizeWidthChange).padding(5)
+                    .width(Length::Units(100)).style(input_style::TextInput))
+                .push(Text::new("*").width(Length::Units(20)).horizontal_alignment(HorizontalAlignment::Center))
                 .push(TextInput::new(&mut img_state.resize_heigth_state, "高度",
-                                     img_state.resize_height.as_str(), Message::ResizeHeightChange)
-                    .width(Length::Units(100)))
+                                     img_state.resize_height.as_str(), Message::ResizeHeightChange).padding(5)
+                    .width(Length::Units(100)).style(input_style::TextInput))
+                .push(Text::new("   默认不填写,则不处理图片宽高。").size(13).vertical_alignment(VerticalAlignment::Bottom))
         ).push(
             Row::new().padding(3).align_items(Align::Center)
                 .push(

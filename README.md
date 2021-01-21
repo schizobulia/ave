@@ -1,5 +1,7 @@
 # 一个音视频处理工具
 
+![Check coverage](https://github.com/schizobulia/ave/workflows/Rust/badge.svg?branch=master)
+
 - ### 使用到的技术
     - ##### [rust](https://www.rust-lang.org)
     - ##### [gstreamer](https://gstreamer.freedesktop.org)
