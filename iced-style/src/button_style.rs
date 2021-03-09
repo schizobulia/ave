@@ -11,7 +11,7 @@ pub enum Button {
     Warning,
     Info,
     Light,
-    Dark
+    Dark,
 }
 
 impl button::StyleSheet for Button {

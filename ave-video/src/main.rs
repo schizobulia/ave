@@ -1,16 +1,16 @@
 #![windows_subsystem = "windows"]
 
 mod app;
-mod page;
 mod gstr;
 mod model;
+mod page;
 
-use iced::{Application, executor, Element, Settings, window, Container, Text, Length, Command};
-use ave_tool::file_tool::{now_dir_path, mkdir, get_file_list};
-use ave_tool::datetime::now_time;
-use app::app_message::Message;
 use crate::app::state::home::HomeState;
 use crate::model::vide_type::VideoContainerType;
+use app::app_message::Message;
+use ave_tool::datetime::now_time;
+use ave_tool::file_tool::{get_file_list, mkdir, now_dir_path};
+use iced::{executor, window, Application, Command, Container, Element, Length, Settings, Text};
 
 fn application() {
     let _result = MainView::run(Settings {
@@ -42,10 +42,13 @@ impl Application for MainView {
     type Flags = ();
 
     fn new(_flags: ()) -> (MainView, Command<Self::Message>) {
-        (MainView {
-            page: String::from("home"),
-            home_page_state: HomeState::default(),
-        }, Command::none())
+        (
+            MainView {
+                page: String::from("home"),
+                home_page_state: HomeState::default(),
+            },
+            Command::none(),
+        )
     }
 
     fn title(&self) -> String {
@@ -54,52 +57,48 @@ impl Application for MainView {
 
     fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
         match message {
-            Message::FileSelected => {
-                match self.page.as_str() {
-                    "home" => {
-                        let file_list = get_file_list(VideoContainerType::default().get_all_type().as_str());
-                        if file_list.len() > 0 {
-                            let dir = mkdir(format!("{}\\out\\video\\{}", now_dir_path(), now_time()));
-                            self.home_page_state.create_video_path = format!("视频生成目录：{}", dir);
-                            let com_arr = page::home::get_command(
-                                &mut self.home_page_state,
-                                dir, file_list);
-                            return Command::batch(com_arr);
-                        }
+            Message::FileSelected => match self.page.as_str() {
+                "home" => {
+                    let file_list =
+                        get_file_list(VideoContainerType::default().get_all_type().as_str());
+                    if file_list.len() > 0 {
+                        let dir = mkdir(format!("{}\\out\\video\\{}", now_dir_path(), now_time()));
+                        self.home_page_state.create_video_path = format!("视频生成目录：{}", dir);
+                        let com_arr =
+                            page::home::get_command(&mut self.home_page_state, dir, file_list);
+                        return Command::batch(com_arr);
                     }
-                    _ => {}
                 }
-            }
+                _ => {}
+            },
 
-            Message::ReceiveMsg(msg) => {
-                match self.page.as_str() {
-                    "home" => {
-                        let old_msg = &self.home_page_state.msg_conversion_statue;
-                        self.home_page_state.msg_conversion_statue =
-                            format!("{}{}\r\n\
-                    ", old_msg, msg.to_string());
-                    }
-                    _ => {}
+            Message::ReceiveMsg(msg) => match self.page.as_str() {
+                "home" => {
+                    let old_msg = &self.home_page_state.msg_conversion_statue;
+                    self.home_page_state.msg_conversion_statue = format!(
+                        "{}{}\r\n\
+                    ",
+                        old_msg,
+                        msg.to_string()
+                    );
                 }
-            }
+                _ => {}
+            },
             Message::VideoQualityChanged(val) => self.home_page_state.quality_val = val,
-            Message::LanguageSelected(vide_type) => self.home_page_state.select_video_type = vide_type,
+            Message::LanguageSelected(vide_type) => {
+                self.home_page_state.select_video_type = vide_type
+            }
         }
         Command::none()
     }
 
     fn view(&mut self) -> Element<Message> {
         match self.page.as_str() {
-            "home" => {
-                Container::new(page::home::render(&mut self.home_page_state))
-                    .height(Length::Fill)
-                    .width(Length::Fill)
-                    .into()
-            }
-            _ => {
-                Container::new(Text::new("页面异常"))
-                    .into()
-            }
+            "home" => Container::new(page::home::render(&mut self.home_page_state))
+                .height(Length::Fill)
+                .width(Length::Fill)
+                .into(),
+            _ => Container::new(Text::new("页面异常")).into(),
         }
     }
 }

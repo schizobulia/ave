@@ -61,7 +61,7 @@ impl VideoContainerType {
         VideoContainerType::Qt,
         VideoContainerType::Fli,
         VideoContainerType::Flc,
-        VideoContainerType::Mod
+        VideoContainerType::Mod,
     ];
 
     //获取所有类型
@@ -116,7 +116,7 @@ impl std::fmt::Display for VideoContainerType {
                 VideoContainerType::Qt => "qt",
                 VideoContainerType::Fli => "fli",
                 VideoContainerType::Flc => "flc",
-                VideoContainerType::Mod => "mod"
+                VideoContainerType::Mod => "mod",
             }
         )
     }

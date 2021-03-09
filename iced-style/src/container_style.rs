@@ -1,4 +1,4 @@
-use iced::{container, Color, Background};
+use iced::{container, Background, Color};
 
 //容器样式
 #[allow(dead_code)]
@@ -10,9 +10,7 @@ pub struct Container {
 impl Default for Container {
     fn default() -> Self {
         Container {
-            background: Color::from_rgb8(
-                0x36, 0x39, 0x3F,
-            ),
+            background: Color::from_rgb8(0x36, 0x39, 0x3F),
             text_color: Color::WHITE,
         }
     }
