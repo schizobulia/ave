@@ -1,5 +1,5 @@
-use crate::model::receive_msg::ReceiveMsg;
 use crate::model::image_type::ImageType;
+use crate::model::receive_msg::ReceiveMsg;
 
 #[derive(Debug, Clone)]
 pub enum Message {

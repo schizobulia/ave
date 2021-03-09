@@ -1,15 +1,15 @@
 #![windows_subsystem = "windows"]
 
 mod app;
-mod page;
 mod model;
+mod page;
 
-use iced::{Application, executor, Element, Settings, window, Container, Text, Command};
-use app::app_message::Message;
-use ave_tool::file_tool::{now_dir_path, mkdir, get_file_list};
-use ave_tool::datetime::now_time;
 use crate::app::state::img::ImgState;
 use crate::model::image_type::ImageType;
+use app::app_message::Message;
+use ave_tool::datetime::now_time;
+use ave_tool::file_tool::{get_file_list, mkdir, now_dir_path};
+use iced::{executor, window, Application, Command, Container, Element, Settings, Text};
 
 fn application() {
     let _result = MainView::run(Settings {
@@ -41,10 +41,13 @@ impl Application for MainView {
     type Flags = ();
 
     fn new(_flags: ()) -> (MainView, Command<Self::Message>) {
-        (MainView {
-            page: String::from("img"),
-            img_page_state: ImgState::default(),
-        }, Command::none())
+        (
+            MainView {
+                page: String::from("img"),
+                img_page_state: ImgState::default(),
+            },
+            Command::none(),
+        )
     }
 
     fn title(&self) -> String {
@@ -53,70 +56,59 @@ impl Application for MainView {
 
     fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
         match message {
-            Message::FileSelected => {
-                match self.page.as_str() {
-                    "img" => {
-                        let file_list = get_file_list(ImageType::default().get_all_type().as_str());
-                        if file_list.len() > 0 {
-                            let dir = mkdir(format!("{}\\out\\img\\{}", now_dir_path(), now_time()));
-                            self.img_page_state.create_img_path = format!("图片生成目录：{}", dir);
-                            let com_arr = page::img::get_command(
-                                dir, file_list, &mut self.img_page_state);
-                            return Command::batch(com_arr);
-                        }
+            Message::FileSelected => match self.page.as_str() {
+                "img" => {
+                    let file_list = get_file_list(ImageType::default().get_all_type().as_str());
+                    if file_list.len() > 0 {
+                        let dir = mkdir(format!("{}\\out\\img\\{}", now_dir_path(), now_time()));
+                        self.img_page_state.create_img_path = format!("图片生成目录：{}", dir);
+                        let com_arr =
+                            page::img::get_command(dir, file_list, &mut self.img_page_state);
+                        return Command::batch(com_arr);
                     }
-                    _ => {}
                 }
-            }
+                _ => {}
+            },
 
-            Message::ReceiveMsg(msg) => {
-                match self.page.as_str() {
-                    "img" => {
-                        let old_msg = &self.img_page_state.msg_conversion_statue;
-                        self.img_page_state.msg_conversion_statue =
-                            format!("{}{}\r\n\
-                    ", old_msg, msg.to_string());
-                    }
-                    _ => {}
+            Message::ReceiveMsg(msg) => match self.page.as_str() {
+                "img" => {
+                    let old_msg = &self.img_page_state.msg_conversion_statue;
+                    self.img_page_state.msg_conversion_statue = format!(
+                        "{}{}\r\n\
+                    ",
+                        old_msg,
+                        msg.to_string()
+                    );
                 }
-            }
+                _ => {}
+            },
 
             Message::ImgTypeSelected(img_type) => self.img_page_state.select_img_type = img_type,
             Message::ImgQualityChanged(q) => self.img_page_state.quality_val = q,
-            Message::ResizeWidthChange(width) => {
-                match width.parse::<u32>() {
-                    Ok(s) => {
-                        self.img_page_state.resize_width = s.to_string();
-                    }
-                    Err(_) => {
-                        self.img_page_state.resize_width = String::from("");
-                    }
+            Message::ResizeWidthChange(width) => match width.parse::<u32>() {
+                Ok(s) => {
+                    self.img_page_state.resize_width = s.to_string();
                 }
-            }
-            Message::ResizeHeightChange(height) => {
-                match height.parse::<u32>() {
-                    Ok(s) => {
-                        self.img_page_state.resize_height = s.to_string();
-                    }
-                    Err(_) => {
-                        self.img_page_state.resize_height = String::from("");
-                    }
+                Err(_) => {
+                    self.img_page_state.resize_width = String::from("");
                 }
-            }
+            },
+            Message::ResizeHeightChange(height) => match height.parse::<u32>() {
+                Ok(s) => {
+                    self.img_page_state.resize_height = s.to_string();
+                }
+                Err(_) => {
+                    self.img_page_state.resize_height = String::from("");
+                }
+            },
         }
         Command::none()
     }
 
     fn view(&mut self) -> Element<Message> {
         match self.page.as_str() {
-            "img" => {
-                Container::new(page::img::render(&mut self.img_page_state))
-                    .into()
-            }
-            _ => {
-                Container::new(Text::new("页面异常"))
-                    .into()
-            }
+            "img" => Container::new(page::img::render(&mut self.img_page_state)).into(),
+            _ => Container::new(Text::new("页面异常")).into(),
         }
     }
 }
