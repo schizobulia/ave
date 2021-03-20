@@ -42,11 +42,19 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
             .push(
                 Row::new().spacing(10).align_items(Align::Center)
                     .push(
-                        Button::new(&mut home_state.file_home_btn, Text::new("选择文件")).padding(5)
+                        Button::new(&mut home_state.file_home_btn,
+                                    Text::new("选择文件")).padding(5)
                             .style(button_style::Button::Primary)
                             .on_press(Message::FileSelected)
                     ).push(
                     Text::new(&home_state.create_video_path).size(18)
+                )
+            )
+            .push(
+                Row::new().align_items(Align::End).push(
+                    Button::new(&mut home_state.other_fun,
+                                Text::new("其他功能")).padding(5)
+                        .style(button_style::Button::Primary)
                 )
             )
     ).push(

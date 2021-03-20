@@ -48,3 +48,8 @@ pub fn get_file_list(filter: &str) -> Vec<PathBuf> {
         }
     }
 }
+
+//获取文件的上一级目录
+pub fn get_file_parent(input_file: &str) -> &str {
+    Path::new(input_file).parent().unwrap().to_str().unwrap()
+}

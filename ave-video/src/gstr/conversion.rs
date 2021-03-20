@@ -1,13 +1,17 @@
 use std::process::{Command, Stdio};
 use std::os::windows::process::CommandExt;
 use core::fmt::Error;
-use ave_tool::file_tool::now_dir_path;
+use ave_tool::file_tool::{now_dir_path, get_file_parent};
 use crate::model::vide_type::VideoContainerType;
 
 //需要在resource中下载ffmpeg.exe文件
 pub fn conversion_video(input_file: &str, output_file: &str, quality_val: i32, tmp_type: VideoContainerType) -> Result<(), Error> {
     let com_mount = get_cmd(tmp_type, input_file, output_file, quality_val);
-    Command::new("cmd").creation_flags(0x08000000).arg("/c").arg(com_mount)
+
+    Command::new("cmd").creation_flags(0x08000000)
+        .arg("/c")
+        .current_dir(get_file_parent(input_file))
+        .arg(com_mount)
         .stdout(Stdio::piped()).output().expect("cmd exec error!");
     Ok(())
 }

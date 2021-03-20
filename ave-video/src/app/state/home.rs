@@ -13,6 +13,7 @@ pub struct HomeState {
     pub msg_conversion_statue: String,
     pub quality_progress: slider::State,
     pub quality_val: f32, //视频压缩比例
+    pub other_fun: button::State,
 }
 
 
@@ -29,6 +30,7 @@ impl Default for HomeState {
             msg_conversion_statue: String::from("控制台...\r\n"),
             quality_val: 200.0,
             quality_progress: slider::State::default(),
+            other_fun: button::State::default(),
         }
     }
 }

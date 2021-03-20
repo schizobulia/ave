@@ -10,6 +10,6 @@ edition = "2018"
 iced = { version = "0.2.0" }
 ave-tool = { path = "../ave-tool", features = ["datetime"] }
 iced-style = { path = "../iced-style" }
-
+iced_aw = { git = "https://gitee.com/schizobuliawj/iced_aw", default-features = false, features = ["card", "colors", "modal"] }
 [features]
 default = []
