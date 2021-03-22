@@ -1,5 +1,5 @@
-use iced::{button, scrollable, slider, pick_list, text_input};
 use crate::model::image_type::ImageType;
+use iced::{button, pick_list, scrollable, slider, text_input};
 
 //首页状态
 pub struct ImgState {

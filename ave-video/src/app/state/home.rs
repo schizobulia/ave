@@ -1,5 +1,5 @@
-use iced::{button, pick_list, scrollable, slider};
 use crate::model::vide_type::VideoContainerType;
+use iced::{button, pick_list, scrollable, slider};
 
 //首页状态
 pub struct HomeState {
@@ -15,7 +15,6 @@ pub struct HomeState {
     pub quality_val: f32, //视频压缩比例
     pub other_fun: button::State,
 }
-
 
 impl Default for HomeState {
     fn default() -> Self {

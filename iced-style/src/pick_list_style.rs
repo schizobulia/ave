@@ -1,6 +1,5 @@
 use iced::{pick_list, Color};
 
-
 pub struct PickList;
 
 //参考：https://www.litefeel.com/tools/ascii.php
@@ -24,7 +23,7 @@ impl pick_list::StyleSheet for PickList {
                 a: 0.5,
                 ..Color::BLACK
             }
-                .into(),
+            .into(),
             selected_text_color: Color::from_rgb8(73, 80, 87),
         }
     }
