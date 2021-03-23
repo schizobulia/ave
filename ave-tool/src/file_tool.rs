@@ -54,11 +54,8 @@ pub fn get_file_list(filter: &str) -> Vec<PathBuf> {
         }
     }
 }
-<<<<<<< HEAD
 
 //获取文件的上一级目录
 pub fn get_file_parent(input_file: &str) -> &str {
     Path::new(input_file).parent().unwrap().to_str().unwrap()
 }
-=======
->>>>>>> 27a4b96b77dce0bd2951b19ae9c93a771db1c428

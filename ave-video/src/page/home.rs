@@ -18,7 +18,7 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
         Some(home_state.select_video_type),
         Message::LanguageSelected,
     )
-    .style(pick_list_style::PickList);
+        .style(pick_list_style::PickList);
     Column::new()
         .spacing(15)
         .push(
@@ -30,25 +30,8 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
                         "请先选择需要最终转换的格式,然后选择文件,\
                 软件会自动开始转换",
                     )
-                    .size(18),
+                        .size(18),
                 )
-<<<<<<< HEAD
-            )
-            .push(
-                Row::new().padding(3).align_items(Align::Center)
-                    .push(Text::new("生成格式：").size(15))
-                    .push(pick_list)
-            )
-            .push(
-                Row::new().spacing(10).align_items(Align::Center)
-                    .push(
-                        Button::new(&mut home_state.file_home_btn,
-                                    Text::new("选择文件")).padding(5)
-                            .style(button_style::Button::Primary)
-                            .on_press(Message::FileSelected)
-                    ).push(
-                    Text::new(&home_state.create_video_path).size(18)
-=======
                 .push(
                     Row::new()
                         .padding(3)
@@ -61,9 +44,8 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
                                 home_state.quality_val,
                                 Message::VideoQualityChanged,
                             )
-                            .step(1.00),
+                                .step(1.00),
                         ),
->>>>>>> 27a4b96b77dce0bd2951b19ae9c93a771db1c428
                 )
                 .push(
                     Row::new()
@@ -94,23 +76,9 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
                     .style(scrollable_style::Scrollable)
                     .push(Text::new(&home_state.msg_conversion_statue).size(16)),
             )
-<<<<<<< HEAD
-            .push(
-                Row::new().align_items(Align::End).push(
-                    Button::new(&mut home_state.other_fun,
-                                Text::new("其他功能")).padding(5)
-                        .style(button_style::Button::Primary)
-                )
-            )
-    ).push(
-        Container::new(Scrollable::new(&mut home_state.scroll_comd_state)
-            .padding(10)
-            .width(Length::Fill)
-=======
-            .height(Length::Units(500))
->>>>>>> 27a4b96b77dce0bd2951b19ae9c93a771db1c428
-            .height(Length::Fill)
-            .style(container_style::Container::default()),
+                .height(Length::Units(500))
+                .height(Length::Fill)
+                .style(container_style::Container::default()),
         )
 }
 
@@ -166,7 +134,7 @@ async fn formatting_video(
             index,
             tmp_type.to_string()
         )
-        .as_str(),
+            .as_str(),
         quality_val as i32,
         tmp_type,
     );
