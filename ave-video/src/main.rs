@@ -10,7 +10,7 @@ use crate::model::vide_type::VideoContainerType;
 use app::app_message::Message;
 use ave_tool::datetime::now_time;
 use ave_tool::file_tool::{get_file_list, mkdir, now_dir_path};
-use iced::{executor, window, Application, Command, Container, Element, Length, Settings, Text};
+use iced::{executor, window, Application, Command, Container, Element, Length, Settings, Text, Clipboard};
 
 fn application() {
     let _result = MainView::run(Settings {
@@ -55,7 +55,7 @@ impl Application for MainView {
         String::from("AVE  (项目处于开发阶段,我的邮箱：2833324528@qq.com)")
     }
 
-    fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
+    fn update(&mut self, message: Self::Message, _clipboard: &mut Clipboard) -> Command<Self::Message> {
         match message {
             Message::FileSelected => match self.page.as_str() {
                 "home" => {

@@ -176,9 +176,9 @@ async fn dispose_img(
     let result = quality_img(dynamic_image, f, quality);
     let res: ReceiveMsg;
     if result {
-        res = ReceiveMsg::new(filename.clone(), String::from("转换成功"));
+        res = ReceiveMsg::new(filename.clone(), String::from("转换成功"), index);
     } else {
-        res = ReceiveMsg::new(filename, String::from("转换失败"));
+        res = ReceiveMsg::new(filename, String::from("转换失败"), index);
     }
     res
 }
