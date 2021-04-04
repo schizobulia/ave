@@ -18,7 +18,7 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
         Some(home_state.select_video_type),
         Message::LanguageSelected,
     )
-        .style(pick_list_style::PickList);
+    .style(pick_list_style::PickList);
     Column::new()
         .spacing(15)
         .push(
@@ -30,7 +30,7 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
                         "请先选择需要最终转换的格式,然后选择文件,\
                 软件会自动开始转换",
                     )
-                        .size(18),
+                    .size(18),
                 )
                 .push(
                     Row::new()
@@ -44,7 +44,7 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
                                 home_state.quality_val,
                                 Message::VideoQualityChanged,
                             )
-                                .step(1.00),
+                            .step(1.00),
                         ),
                 )
                 .push(
@@ -76,9 +76,9 @@ pub fn render(home_state: &mut HomeState) -> Column<Message> {
                     .style(scrollable_style::Scrollable)
                     .push(Text::new(&home_state.msg_conversion_statue).size(16)),
             )
-                .height(Length::Units(500))
-                .height(Length::Fill)
-                .style(container_style::Container::default()),
+            .height(Length::Units(500))
+            .height(Length::Fill)
+            .style(container_style::Container::default()),
         )
 }
 
@@ -134,7 +134,7 @@ async fn formatting_video(
             index,
             tmp_type.to_string()
         )
-            .as_str(),
+        .as_str(),
         quality_val as i32,
         tmp_type,
     );
